@@ -25,3 +25,16 @@ body {
   color: var(--foreground);
   font-family: "Reddit Sans", sans-serif;
 }
+
+html {
+    overflow: scroll;
+    overflow-x: hidden;
+}
+::-webkit-scrollbar {
+    width: 0;  
+    background: transparent;  
+}
+
+::-webkit-scrollbar-thumb {
+    background: white;
+}
