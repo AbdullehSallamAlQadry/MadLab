@@ -1,0 +1,62 @@
+[
+  {
+    "category": "Dermoscopy Images",
+    "color": "#62E3D4",
+    "items": [
+      {
+        "id": "Dermoscopy/Skin Cancer",
+        "name": "Skin Cancer",
+        "image": "/diagnostics-icons/skin-cancer.svg",
+        "p": "Detect malignant skin lesions with high accuracy using AI-powered dermoscopy analysis."
+      },
+      {
+        "id": "Dermoscopy/Diabetic Retinopathy",
+        "name": "Diabetic Retinopathy",
+        "image": "/diagnostics-icons/skin-cancer.svg",
+        "p": "Identify early signs of diabetic retinopathy through advanced image processing techniques."
+      }
+    ]
+  },
+  {
+    "category": "X-ray Images",
+    "color": "#F8F26B",
+    "items": [
+      {
+        "id": "Xray/Skull Fractures",
+        "name": "Skull Fractures",
+        "image": "/diagnostics-icons/skin-cancer.svg",
+        "p": "Detect skull fractures with precision using AI-enhanced X-ray image analysis."
+      },
+      {
+        "id": "Xray/Bone Fractures",
+        "name": "Bone Fractures",
+        "image": "/diagnostics-icons/skin-cancer.svg",
+        "p": "Accurately identify bone fractures through advanced AI algorithms applied to X-ray images."
+      },
+      {
+        "id": "Xray/Rib Fractures",
+        "name": "Rib Fractures",
+        "image": "/diagnostics-icons/skin-cancer.svg",
+        "p": "Enhance rib fracture detection with AI-driven analysis of chest X-ray images."
+      }
+    ]
+  },
+  {
+    "category": "MRI Images",
+    "color": "#7CD3FF",
+    "items": [
+      {
+        "id": "MRI/Alzheimers",
+        "name": "Alzheimer’s",
+        "image": "/diagnostics-icons/skin-cancer.svg",
+        "p": "Early detection of Alzheimer's disease using AI-powered MRI image analysis."
+      },
+      {
+        "id": "MRI/Brain Tumor",
+        "name": "Brain Tumor",
+        "image": "/diagnostics-icons/skin-cancer.svg",
+        "p": "Identify brain tumors with high accuracy through advanced AI techniques applied to MRI scans."
+      }
+    ]
+  }
+]
