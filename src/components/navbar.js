@@ -1,11 +1,11 @@
 import Link from "next/link";
+import PopupLogin from "./login";
+import PopupSignup from "./signup";
 
 const btns_links_style = "text-xl flex text-black dark:text-white";
 
 const btnLinkStyle = "px-4 py-1.5 rounded-md hover:bg-white hover:text-black";
 const btnStyle = "cursor-pointer";
-
-
 
 export default function Navbar() {
   return (
@@ -18,8 +18,8 @@ export default function Navbar() {
         <Link className={btnLinkStyle} href="/about">About us</Link>
       </div>
       <div className={`${btns_links_style}  gap-1xl`}>
-        <button className={`${btnLinkStyle} ${btnStyle}`}>Sign Up</button>
-        <button className={`${btnLinkStyle} ${btnStyle}`}>Login</button>
+        <PopupSignup btnLinkStyle={btnLinkStyle} btnStyle={btnStyle} />
+        <PopupLogin btnLinkStyle={btnLinkStyle} btnStyle={btnStyle} />
       </div>
     </nav>
   );
