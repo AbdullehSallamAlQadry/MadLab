@@ -4,13 +4,13 @@
     "color": "#62E3D4",
     "items": [
       {
-        "id": "Dermoscopy/Skin Cancer",
+        "id": "skin-cancer",
         "name": "Skin Cancer",
         "image": "/diagnostics-icons/skin-cancer.svg",
         "p": "Detect malignant skin lesions with high accuracy using AI-powered dermoscopy analysis."
       },
       {
-        "id": "Dermoscopy/Diabetic Retinopathy",
+        "id": "diabetic-retinopathy",
         "name": "Diabetic Retinopathy",
         "image": "/diagnostics-icons/skin-cancer.svg",
         "p": "Identify early signs of diabetic retinopathy through advanced image processing techniques."
@@ -22,19 +22,19 @@
     "color": "#F8F26B",
     "items": [
       {
-        "id": "Xray/Skull Fractures",
+        "id": "skull-fractures",
         "name": "Skull Fractures",
         "image": "/diagnostics-icons/skin-cancer.svg",
         "p": "Detect skull fractures with precision using AI-enhanced X-ray image analysis."
       },
       {
-        "id": "Xray/Bone Fractures",
+        "id": "bone-fractures",
         "name": "Bone Fractures",
         "image": "/diagnostics-icons/skin-cancer.svg",
         "p": "Accurately identify bone fractures through advanced AI algorithms applied to X-ray images."
       },
       {
-        "id": "Xray/Rib Fractures",
+        "id": "rib-fractures",
         "name": "Rib Fractures",
         "image": "/diagnostics-icons/skin-cancer.svg",
         "p": "Enhance rib fracture detection with AI-driven analysis of chest X-ray images."
@@ -46,13 +46,13 @@
     "color": "#7CD3FF",
     "items": [
       {
-        "id": "MRI/Alzheimers",
+        "id": "alzheimers",
         "name": "Alzheimer’s",
         "image": "/diagnostics-icons/skin-cancer.svg",
         "p": "Early detection of Alzheimer's disease using AI-powered MRI image analysis."
       },
       {
-        "id": "MRI/Brain Tumor",
+        "id": "brain-tumor",
         "name": "Brain Tumor",
         "image": "/diagnostics-icons/skin-cancer.svg",
         "p": "Identify brain tumors with high accuracy through advanced AI techniques applied to MRI scans."

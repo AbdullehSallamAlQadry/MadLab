@@ -1,4 +1,5 @@
 import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 import "./globals.css";
 export default function RootLayout({ children }) {
   return (
@@ -9,9 +10,10 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body className="bg-[#121212] text-white box-border min-h-screen p-0 m-0">
+      <body className="dark:bg-dark-bg-main dark:text-dark-text-main bg-light-bg-main text-light-text-main box-border min-h-screen p-0 m-0">
         <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );

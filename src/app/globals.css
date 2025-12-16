@@ -1,29 +1,29 @@
 @import "tailwindcss";
+
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+    --color-dark-bg-main: #121212;
+    --color-dark-bg-second: #191919;
+    --color-dark-bg-third: black;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+    --color-dark-text-main: #ffffff;
+    --color-dark-text-second: #8E8E8E;
+    --color-dark-text-third: #191919;
+    
+    --color-dark-btn-bg: #ffffff;
+    --color-dark-btn-text: #121212;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: "Reddit Sans", sans-serif;
+    --color-light-bg-main: #909090;
+    --color-light-bg-second: #909090;
+    --color-light-bg-third: #909090;
+    
+    --color-light-text-main: #909090;
+    --color-light-text-second: #909090;
+    --color-light-text-third: #909090;
+    
+    --color-light-btn-bg: #909090;
+    --color-light-btn-text: #909090;
 }
 
 html {
