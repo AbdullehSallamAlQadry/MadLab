@@ -2,10 +2,62 @@
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
-@theme {
+:root {
+    --bg-main: #121212;
+    --bg-second: #191919;
+    --bg-third: #1f1f1f;
+
+    --text-main: #ffffff;
+    --text-second: #8E8E8E;
+    --text-third: #191919;
+    
+    --btn-bg: #ffffff;
+    --btn-text: #121212;
+
+    --border-color:#ffffff;
+    
+    --shadow-color: rgba(0, 0, 0, 0.8);
+    --overlay-bg: rgba(255, 255, 255, 0.5);
+  }
+  
+  [data-theme="dark"] {
+    --bg-main: #121212;
+    --bg-second: #191919;
+    --bg-third: #1f1f1f;
+    
+    --text-main: #ffffff;
+    --text-second: #8E8E8E;
+    --text-third: #191919;
+    
+    --btn-bg: #ffffff;
+    --btn-text: #121212;
+    
+    --border-color:#ffffff;
+    
+    --shadow-color: rgba(255, 255, 255, 0.8);
+    --overlay-bg: rgba(0, 0, 0, 0.5);
+}
+
+  @theme {
+    --color-bg-main: var(--bg-main);
+    --color-bg-second: var(--bg-second);
+    --color-bg-third: var(--bg-third);
+
+    --color-text-main: var(--text-main);
+    --color-text-second: var(--text-second);
+    --color-text-third: var(--text-third);
+
+    --color-btn-bg: var(--btn-bg);
+    --color-btn-text: var(--btn-text);
+
+    --color-border-color: var(--border-color);
+    --color-shadow-color: var(--shadow-color);
+    --color-overlay-bg: var(--overlay-bg);
+
+  
     --color-dark-bg-main: #121212;
     --color-dark-bg-second: #191919;
-    --color-dark-bg-third: black;
+    --color-dark-bg-third: #1f1f1f;
 
     --color-dark-text-main: #ffffff;
     --color-dark-text-second: #8E8E8E;
@@ -28,13 +80,132 @@
 
 html {
     overflow: scroll;
-    overflow-x: hidden;
+    
 }
 ::-webkit-scrollbar {
-    width: 0;  
+    display: none;
     background: transparent;  
 }
 
 ::-webkit-scrollbar-thumb {
     background: white;
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 30px;
+  padding: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-bg-main);
+  --_m: 
+    conic-gradient(#0000 10%,#000),
+    linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+          mask: var(--_m);
+  -webkit-mask-composite: source-out;
+          mask-composite: subtract;
+  animation: l3 1s infinite linear;
+}
+@keyframes l3 {to{transform: rotate(1turn)}}
+
+.pageLoader {
+  width: 30px;
+  padding: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-text-main);
+  --_m: 
+    conic-gradient(#0000 10%,#000),
+    linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+          mask: var(--_m);
+  -webkit-mask-composite: source-out;
+          mask-composite: subtract;
+  animation: l3 1s infinite linear;
+}
+@keyframes l3 {to{transform: rotate(1turn)}}
+
+input,label,select,textarea{
+  cursor: pointer;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+option {
+  padding: 8px;
+  background-color: var(--color-bg-main);
+  color: var(--color-text-main);
+}
+
+option:nth-of-type(odd) {
+  background-color: var(--color-bg-third);
+}
+
+option:hover,
+option:focus {
+  background-color: var(--color-bg-second);
+}
+
+.linkStyle{
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.linkStyle:hover{
+  background-color: var(--color-btn-bg);
+  color: var(--color-btn-text);
+}
+
+.sectionStyle{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 640px;
+  padding: 0px 160px;
+}
+
+.containerStyle{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 66.667%;
+  height: auto;
+  margin: 40px 0px;
+}
+
+.headerText{
+  width: 100%;
+  font-size:30px
+}
+
+.pMainText{
+  text-align: start;
+  width: 100%;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.pSecondText{
+  font-size: 20px;
+  color: var(--text-second);
+}
+
+.btnStyle{
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  width: 170px;
+  text-align: center;
+  padding: 16px 0px;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.btnStyle:hover{
+  opacity: 0.9;
 }

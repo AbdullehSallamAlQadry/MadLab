@@ -1,6 +1,8 @@
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/navbar/navbarServer";
 import Footer from "@/components/footer";
 import "./globals.css";
+import { AuthProvider } from "@/components/AuthContext";
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" data-theme="dark">
@@ -10,10 +12,12 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body className="dark:bg-dark-bg-main dark:text-dark-text-main bg-light-bg-main text-light-text-main box-border min-h-screen p-0 m-0">
-        <Navbar />
-        {children}
-        <Footer />
+      <body className="bg-bg-main text-text-main box-border min-h-screen p-0 m-0 w-384">
+        <AuthProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
