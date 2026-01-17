@@ -2,119 +2,132 @@
 
 import axios from 'axios'
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation' 
 import { encrypt, decrypt } from './auth-utils'
+import { API_URL } from './env'
 
-const secretKey = process.env.SESSION_SECRET
-const encodedKey = new TextEncoder().encode(secretKey)
-const ApiUrl = process.env.NEXT_PUBLIC_API_URL;
 const MaximumAge = 48 * 60 * 60;
+const BASE_URL = API_URL;
 
 const api = axios.create({
-  baseURL: ApiUrl,
+  baseURL: BASE_URL,
+  timeout: 15000,
 });
 
-export async function updateSessionCredits(num) {
+export async function axiosWithRefresh(url, options = {}) {
+  const cookieStore = await cookies();
   const sessionData = await getSessionData();
-  if (!sessionData) return;
 
-  sessionData.doctor.credits += num;
+  if (!sessionData) {
+    redirect('/');
+  }
 
-  await setAuthCookies(sessionData.doctor, sessionData.access, sessionData.refresh);
+  try {
+    const res = await api({
+      url,
+      method: options.method ?? 'GET',
+      data: options.body,
+      headers: {
+        Authorization: `Bearer ${sessionData.access}`,
+        ...options.headers,
+      },
+    });
+
+    return { ok: true, status: res.status, data: res.data };
+  } catch (err) {
+    if (err.response?.status === 401 && sessionData) {
+      try {
+        const refreshResponse = await fetch(`${BASE_URL}auth/refresh/`, {
+          method: 'POST',
+          headers: { 
+            'Cookie': cookieStore.toString(), 
+            'Content-Type': 'application/json'
+          },
+        });
+
+        const refreshResult = await refreshResponse.json().catch(() => ({}));
+        
+        if (!refreshResponse.ok || !refreshResult.access) {
+          throw new Error('Refresh failed');
+        }
+
+        const newAccessToken = refreshResult.access;
+        
+        await setAuthCookies(sessionData.doctor, newAccessToken);
+
+        const retry = await api({
+          url,
+          method: options.method ?? 'GET',
+          data: options.body,
+          headers: {
+            Authorization: `Bearer ${newAccessToken}`,
+            ...options.headers,
+          },
+        });
+
+        return { ok: true, status: retry.status, data: retry.data };
+
+      } catch (refreshErr) {
+        deleteSessions()
+      }
+    }
+
+    return {
+      ok: false,
+      status: err.response?.status ?? 500,
+      data: err.response?.data ?? { detail: err.message },
+    };
+  }
 }
 
-async function getSessionData() {
+export async function getSessionData() {
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get('session')?.value;
   if (!sessionToken) return null;
-  return await decrypt(sessionToken);
+  try {
+    return await decrypt(sessionToken);
+  } catch (e) {
+    return null;
+  }
 }
 
-export async function setAuthCookies(userData, accessToken, refreshToken) {
+export async function setAuthCookies(userData, accessToken) {
   const cookieStore = await cookies()
-  
-  const sessionPayload = { 
-    doctor: userData,
-    access: accessToken, 
-    refresh: refreshToken 
-  }
-
+  const sessionPayload = { doctor: userData, access: accessToken }
   const sessionToken = await encrypt(sessionPayload, '2d')
 
   cookieStore.set('session', sessionToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
     path: '/',
-    maxAge: MaximumAge, 
+    maxAge: MaximumAge,
+    sameSite: 'lax'
   })
 }
 
 export async function deleteSessions() {
   const cookieStore = await cookies()
   cookieStore.delete('session')
+  cookieStore.delete('refresh_token') 
+  redirect('/');
 }
 
-export async function axiosWithRefresh(url, options = {}) {
+export async function updateSessionCredits(num) {
   const sessionData = await getSessionData();
-  if (!sessionData) redirect('/');
+  if (!sessionData) return;
+  sessionData.doctor.credits += num;
+  await setAuthCookies(sessionData.doctor, sessionData.access);
+}
 
+export async function getDoctorInfo() {
   try {
-    const response = await api({
-      url,
-      method: options.method || 'GET',
-      data: options.body, 
-      headers: {
-        ...options.headers,
-        'Authorization': `Bearer ${sessionData.access}`,
-      },
-    });
+    const session = await getSessionData()
+    const doctorId = session.doctor.id
+    const response = await axiosWithRefresh(`doctors/${doctorId}/`);
 
-    return { ok: true, status: response.status, data: response.data };
-  } 
-  catch (error) {
-    if (error.response?.status === 401) {
-      try {
-        const refreshRes = await axios.post(`${ApiUrl}/api/token/refresh/`, {
-          refresh: sessionData.refresh,
-        });
-
-        const newAccessToken = refreshRes.data.access;
-
-        const cookieStore = await cookies();
-        sessionData.access = newAccessToken;
-        const updatedToken = await encrypt(sessionData, '2d');
-        
-        cookieStore.set('session', updatedToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          path: '/',
-          maxAge: MaximumAge,
-        });
-
-        const retryResponse = await api({
-          url,
-          method: options.method || 'GET',
-          data: options.body,
-          headers: {
-            ...options.headers,
-            'Authorization': `Bearer ${newAccessToken}`,
-          },
-        });
-
-        return { ok: true, status: retryResponse.status, data: retryResponse.data };
-      } 
-      catch (refreshError) {
-        await deleteSessions();
-        redirect('/');
-      }
-    }
-
-    return { 
-      ok: false, 
-      status: error.response?.status || 500, 
-      data: error.response?.data || null 
-    };
+    await setAuthCookies(response.data, session.access)
+    
+  } catch (err) {
+    deleteSessions()
   }
 }

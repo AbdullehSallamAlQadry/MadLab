@@ -3,6 +3,24 @@
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 :root {
+    --bg-main: #ffffff;
+    --bg-second: #f5f5f5;
+    --bg-third: #eeeeee;
+
+    --text-main: #121212;
+    --text-second: #5a5a5a;
+    --text-third: #f5f5f5;
+    
+    --btn-bg: #121212;
+    --btn-text: #ffffff;
+
+    --border-color: #888888;
+    
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --overlay-bg: rgba(0, 0, 0, 0.5);
+  }
+  
+  [data-theme="dark"] {
     --bg-main: #121212;
     --bg-second: #191919;
     --bg-third: #1f1f1f;
@@ -18,24 +36,6 @@
     
     --shadow-color: rgba(0, 0, 0, 0.8);
     --overlay-bg: rgba(255, 255, 255, 0.5);
-  }
-  
-  [data-theme="dark"] {
-    --bg-main: #121212;
-    --bg-second: #191919;
-    --bg-third: #1f1f1f;
-    
-    --text-main: #ffffff;
-    --text-second: #8E8E8E;
-    --text-third: #191919;
-    
-    --btn-bg: #ffffff;
-    --btn-text: #121212;
-    
-    --border-color:#ffffff;
-    
-    --shadow-color: rgba(255, 255, 255, 0.8);
-    --overlay-bg: rgba(0, 0, 0, 0.5);
 }
 
   @theme {
@@ -53,29 +53,6 @@
     --color-border-color: var(--border-color);
     --color-shadow-color: var(--shadow-color);
     --color-overlay-bg: var(--overlay-bg);
-
-  
-    --color-dark-bg-main: #121212;
-    --color-dark-bg-second: #191919;
-    --color-dark-bg-third: #1f1f1f;
-
-    --color-dark-text-main: #ffffff;
-    --color-dark-text-second: #8E8E8E;
-    --color-dark-text-third: #191919;
-    
-    --color-dark-btn-bg: #ffffff;
-    --color-dark-btn-text: #121212;
-
-    --color-light-bg-main: #909090;
-    --color-light-bg-second: #909090;
-    --color-light-bg-third: #909090;
-    
-    --color-light-text-main: #909090;
-    --color-light-text-second: #909090;
-    --color-light-text-third: #909090;
-    
-    --color-light-btn-bg: #909090;
-    --color-light-btn-text: #909090;
 }
 
 html {
@@ -91,9 +68,8 @@ html {
     background: white;
 }
 
-/* HTML: <div class="loader"></div> */
 .loader {
-  width: 30px;
+  width: 24px;
   padding: 8px;
   aspect-ratio: 1;
   border-radius: 50%;
@@ -206,6 +182,22 @@ option:focus {
   cursor: pointer;
 }
 
-.btnStyle:hover{
+.btnStyle:hover:not(:disabled) {
   opacity: 0.9;
+}
+
+.btnStyle:disabled {           
+  cursor: default; 
+  opacity: 0.7;
+  filter: grayscale(1);    
+}
+
+.link-button {
+  color: var(--text-second);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-button:hover {
+  opacity: 0.8;
 }

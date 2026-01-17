@@ -1,5 +1,5 @@
 import NavbarClient from "./navbarClient";
-import { getAuthToken } from "../authToken";
+import { getAuthToken } from "../../authToken";
 
 export default async function Navbar() {
   const [doctor, accessToken] = await getAuthToken();

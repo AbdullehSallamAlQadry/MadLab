@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"
 import InputContainer from "./input_container"
 
-export default function PasswordContainer({name, placeholder, type = "password", error}) {
+export default function PasswordContainer({name, placeholder, error, defaultValue}) {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <InputContainer 
@@ -11,11 +11,13 @@ export default function PasswordContainer({name, placeholder, type = "password",
       placeholder={placeholder}
       type={showPassword ? "text" : "password"} 
       error={error}
+      defaultValue={defaultValue}
     >
       <FontAwesomeIcon 
         icon={showPassword ? faEyeSlash : faEye} 
         className="absolute right-4 top-3 cursor-pointer text-text-second"
-        onClick={() => setShowPassword(!showPassword)}  
+        onMouseDown={() => setShowPassword(showPassword)}  
+        onMouseUp={() => setShowPassword(!showPassword)}  
       />
     </InputContainer>
   )

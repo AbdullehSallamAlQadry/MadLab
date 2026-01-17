@@ -6,7 +6,7 @@ import { fetchDoctor } from "@/components/authToken";
 export async function getHistoryAction(queryString) {
   const doctor = await fetchDoctor(); 
   try {
-      const res = await axiosWithRefresh(`/api/skin-cancer-checkups/?doctor=${doctor.id}&${queryString}`);
+      const res = await axiosWithRefresh(`skin-cancer-checkups/?doctor=${doctor.id}&${queryString}`);
       if (res.ok) {
           return {
               items: res.data.results, 
@@ -22,7 +22,7 @@ export async function getHistoryAction(queryString) {
 
 export async function getHistoryDetailAction(id) {
   try {
-    const res = await axiosWithRefresh(`/api/skin-cancer-checkups/${id}/`, {
+    const res = await axiosWithRefresh(`skin-cancer-checkups/${id}/`, {
       method: 'GET',
     });
     if (res.ok) {

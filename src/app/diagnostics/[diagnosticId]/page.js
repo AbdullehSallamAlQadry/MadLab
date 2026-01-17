@@ -2,8 +2,8 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useState, use } from 'react';
-import SubmitButton from '@/components/auth/components/submit_button';
+import { useState, use, useEffect } from 'react';
+import SubmitButton from '@/components/feature/auth/components/submit_button';
 import { useActionState } from 'react';
 import { diagnosticAction } from './action';
 import { SelectItems } from './components/SelectItems';
@@ -75,6 +75,10 @@ export default function Page({ params }) {
     formAction(formData);
   };
 
+  useEffect(()=>{
+    console.log(state?.errors)
+  },[state])
+
   return (
     <main suppressHydrationWarning>
       <form className='w-full h-auto flex justify-center items-center gap-20' action={handleSubmit}>
@@ -119,18 +123,18 @@ export default function Page({ params }) {
         <div className='flex flex-col justify-start items-center w-90 h-145 bg-bg-second rounded-xl p-4 m-4 gap-4'>
           <h1 className='w-65 text-text-second border-b-text-second text-center p-1.5'>Patient Info</h1>
           <InputWithError name={'age'} label={'Age'} error={state?.errors?.age}> 
-            <FieldItems name={'age'} placeholder={'age'} error={state?.errors?.age}/>
+            <FieldItems name={'age'} placeholder={'age'} error={state?.errors?.age} defaultValue={state?.fields?.age}/>
           </InputWithError>
           
           <InputWithError name={'gender'} label={'Gender'} error={state?.errors?.gender}> 
-            <SelectItems name={'gender'} defaultValue={'male'} error={state?.errors?.gender}>
+            <SelectItems name={'gender'} defaultValue={state?.fields?.gender || 'male'} error={state?.errors?.gender}>
               <option value={'male'}>male</option>
               <option value={'female'}>female</option>
             </SelectItems>
           </InputWithError>
 
           <InputWithError name={'blood_type'} label={'Blood Type'} error={state?.errors?.blood_type}> 
-            <SelectItems name={'blood_type'} defaultValue={'O-'} error={state?.errors?.blood_type}>
+            <SelectItems name={'blood_type'} defaultValue={state?.fields?.blood_type || 'O-'} error={state?.errors?.blood_type}>
               <option value={'AB+'}>AB+</option>
               <option value={'A+'}>A+</option>
               <option value={'B+'}>B+</option>
@@ -143,27 +147,27 @@ export default function Page({ params }) {
           </InputWithError>
 
           <InputWithError name={'lesion_size_mm'} label={'Lesion Size'} error={state?.errors?.lesion_size_mm}> 
-            <FieldItems name={'lesion_size_mm'} placeholder={'mm'} error={state?.errors?.lesion_size_mm}/>
+            <FieldItems name={'lesion_size_mm'} placeholder={'mm'} error={state?.errors?.lesion_size_mm} defaultValue={state?.fields?.lesion_size_mm}/>
           </InputWithError>
 
           <InputWithError name={'lesion_location'} label={'Lesion Location'} error={state?.errors?.lesion_location}> 
-            <FieldItems name={'lesion_location'} placeholder={'Location'} error={state?.errors?.lesion_location} type='text'/>
+            <FieldItems name={'lesion_location'} placeholder={'Location'} error={state?.errors?.lesion_location} type='text' defaultValue={state?.fields?.lesion_location}/>
           </InputWithError>
 
           <InputWithError name={'diameter_mm'} label={'Diameter'} error={state?.errors?.diameter_mm}> 
-            <FieldItems name={'diameter_mm'} placeholder={'Diameter'} error={state?.errors?.diameter_mm}/>
+            <FieldItems name={'diameter_mm'} placeholder={'Diameter'} error={state?.errors?.diameter_mm} defaultValue={state?.fields?.diameter_mm}/>
           </InputWithError>
 
           <div className='grid grid-cols-2 w-full gap-4'>  
-            <CheckboxItem category={'asymmetry'}/>            
-            <CheckboxItem category={'border_irregularity'}/>            
-            <CheckboxItem category={'color_variation'}/>            
-            <CheckboxItem category={'evolution'}/>            
+            <CheckboxItem category={'asymmetry'} defaultChecked={state?.fields?.asymmetry}/>            
+            <CheckboxItem category={'border_irregularity'} defaultChecked={state?.fields?.border_irregularity}/>            
+            <CheckboxItem category={'color_variation'} defaultChecked={state?.fields?.color_variation}/>            
+            <CheckboxItem category={'evolution'} defaultChecked={state?.fields?.evolution}/>            
           </div>
 
           <div className='flex flex-col w-full gap-1'>
             <label htmlFor='note'>Notes</label>
-            <textarea className='resize-none border-text-main border p-1.5 rounded-xl' rows={3} id='note' name='note' placeholder='Additional information...' />
+            <textarea className='resize-none border-text-main border p-1.5 rounded-xl' rows={3} id='note' name='note' placeholder='Additional information...' defaultValue={state?.fields?.note} />
           </div>
         </div>
         <input type="hidden" name="diagnosticId" value={diagnosticId} />
@@ -219,12 +223,14 @@ function CompleteResult({data}) {
         </div>
         <div className='flex justify-center items-center'>
           <div className='relative w-50 h-50'>
-            {currentInfo?.result?.xai_image &&
-              <Image src={currentInfo.result.xai_image} alt={'image'} fill/> 
+            {currentInfo?.xai_image &&
+              <Image src={currentInfo.xai_image} alt={'image'} fill/> 
             }
           </div>
           <div className='relative w-50 h-50'>
-            {currentInfo?.image && <Image src={currentInfo.image} alt={'image'} fill/>}
+            {currentInfo?.image && 
+              <Image src={currentInfo.image} alt={'image'} fill/>
+            }
           </div>
         </div>
         <div className='flex justify-center items-center gap-1'>

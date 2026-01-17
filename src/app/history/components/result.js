@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import PopUp from "../../../components/popup"
+import PopUp from "../../../components/ui/popup"
 import { getHistoryDetailAction } from "../action";
 
 export function PopupResult({selectItem, setSelectItem}) {
@@ -88,8 +88,8 @@ function Success({data}) {
               </div>
               <div className='flex justify-center items-center'>
                 <div className='relative w-42 h-42'>
-                  {currentInfo?.result?.xai_image &&
-                    <Image src={currentInfo.result.xai_image} alt={'image'} fill/> 
+                  {currentInfo?.xai_image &&
+                    <Image src={currentInfo.xai_image} alt={'image'} fill/> 
                   }
                 </div>
                 <div className='relative w-42 h-42'>

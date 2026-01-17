@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { fetchDoctor } from "@/components/authToken";
-import { useAuth } from "@/components/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { redirect } from "next/dist/server/api-utils";
 import { useState, useEffect } from "react";
 

@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'http',
-        hostname: '13.60.217.243',
+        hostname: 'medmind.site',
         port: '',
         pathname: '/media/**',
       },

@@ -1,5 +1,5 @@
-export default function EditPage() {
-  return (
-    <div>Edit Page</div>
-  )
+import { redirect } from "next/navigation";
+
+export default function page() {
+  redirect('/edit/profile');
 }

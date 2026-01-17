@@ -19,14 +19,12 @@ const diagnosticSchema = z.object({
     .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], { errorMap: () => ({ message: 'Blood type is required' }) }),
   lesion_size_mm:z
     .number()
-    .int()
     .positive('Lesion size must be a positive number'),
   lesion_location:z
     .string()
     .min(2, 'Lesion location is required'),
   diameter_mm:z
     .number()
-    .int()
     .positive('Diameter must be a positive number'),
   asymmetry:z.boolean(),
   border_irregularity:z.boolean(),
@@ -57,12 +55,13 @@ export async function diagnosticAction(prevState, formData) {
   if (!imageFiles || imageFiles.length === 0 || imageFiles[0].size === 0) {
     return { 
       success: false, 
-      massage: "At least one valid image is required." 
+      massage: "At least one valid image is required.",
+      fields: data
     };
   }
 
   if(data.images.length === 0) {
-    return { success: false, massage: "No images found in request" };
+    return { success: false, massage: "No images found in request", fields: data };
   }
 
   const parsed = diagnosticSchema.safeParse(data);
@@ -72,7 +71,7 @@ export async function diagnosticAction(prevState, formData) {
       success: false,
       massage: "Validation failed", 
       errors: JSON.parse(JSON.stringify(parsed.error.flatten().fieldErrors)),
-      data: null
+      fields: data
     };
   }
 
@@ -99,43 +98,54 @@ export async function diagnosticAction(prevState, formData) {
   });
 
   try{
-    const res = await axiosWithRefresh(`/api/${diagnosticId}-checkups/`, {
+    const res = await axiosWithRefresh(`/${diagnosticId}-checkups/`, {
       method: 'POST',
       body: body, 
     });
 
     const data = res.data;
 
-    console.log(res.data)
+    if (!res.ok) {
+      return { 
+        success: false, 
+        fields: data, 
+        errors: res.error || {}, 
+        massage: res.data?.detail || "Validation error from server", 
+      };
+    }
 
     await updateSessionCredits(-100);
-
     const finalResult = await pollResult({ taskId: data.id });
 
     if (finalResult.status === 'PENDING') {
-      return { success: false, massage: "Analysis is taking too long. Please check later." };
+      return { 
+        success: false, 
+        massage: "Analysis is taking too long. Please check later.", 
+        fields: data 
+      };
     }
 
     return {
       success: 'COMPLETED', 
       data: finalResult.data,
       errors: {},
-      massage: ""
+      massage: "",
+      fields: data 
     };
   }
   catch(err){
     return { 
       success: false, 
-      errors: {}, 
-      massage: "Server connection failed", 
-      data: null 
+      errors: { server: "Connection failed" }, 
+      massage: err.message || "An unexpected error occurred", 
+      fields: data 
     };
   }
 }
 
-async function pollResult({taskId, maxRetries = 2, interval = 2000}) {
+async function pollResult({taskId, maxRetries = 10, interval = 3000}) {
   for (let i = 0; i < maxRetries; i++) {
-    const res = await axiosWithRefresh(`/api/${diagnosticId}-checkups/${taskId}/`);
+    const res = await axiosWithRefresh(`/${diagnosticId}-checkups/${taskId}/`);
     console.log(`/api/${diagnosticId}-checkups/${taskId}/`)
     if (res.ok) {
       const data = res.data;
