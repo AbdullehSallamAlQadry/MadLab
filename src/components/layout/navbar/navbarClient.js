@@ -15,10 +15,17 @@ export default function NavbarClient({doctor}) {
   const [openProfile, setOpenProfile] = useState(false)
   const { login, signup, openLogin, openSignup, closeAll , logout, logoutAction} = useAuth();
 
-  const navItems = [
+  const AccountNavItems = [
     { label: 'Billing', href: '/bills', icon: faMoneyBill1, type: 'link' },
-    { label: 'Edit', href: '/edit', icon: faPenToSquare, type: 'link' },
+    { label: 'Edit', href: '/edit/profile', icon: faPenToSquare, type: 'link' },
     { label: 'Log out', onClick: 'logout', icon: faArrowRightFromBracket, type: 'button' },
+  ];
+
+  const HeaderNavItems = [
+    { label: "Home", href: "/", access: true},
+    { label: "Diagnostics", href: "/diagnostics", access: true},
+    { label: "History", href: "/history", access: doctor},
+    { label: "About us", href: "/about", access: true},
   ];
 
   useEffect(() => {
@@ -40,12 +47,9 @@ export default function NavbarClient({doctor}) {
       <h1 className="text-4xl font-thin text-text-main cursor-default">MedMind</h1>
       
       <nav className='text-xl flex text-text-main gap-10 pt-2'>
-        <Link className='linkStyle' href="/">Home</Link>
-        <Link className='linkStyle' href="/diagnostics">Diagnostics</Link>
-        {doctor && (
-          <Link className='linkStyle' href="/history">History</Link>
-        )}
-        <Link className='linkStyle' href="/about">About us</Link>
+        {HeaderNavItems.map((item, index) => (
+          item.access && <Link key={index} className="linkStyle" href={item.href}>{item.label}</Link>
+        ))}
       </nav>
 
       {!doctor && (
@@ -57,8 +61,7 @@ export default function NavbarClient({doctor}) {
         </div>
       )}
       {doctor && (
-        <div className="relative">
-        <div className={`flex items-center gap-2`}>
+        <div className="relative flex items-center gap-2">
           <p className="border border-border-color w-20 rounded-2xl text-center">{doctor?.credits}</p> 
           <div 
             className="relative"
@@ -71,7 +74,7 @@ export default function NavbarClient({doctor}) {
               <FontAwesomeIcon icon={faUserCircle} className="text-[30px]" />
             </button>
             <div className={`z-9999 ${openProfile ? 'visible' : 'hidden'}`}>
-              <div className="absolute w-fit top-10 right-0 border bg-bg-second border-border-color rounded-xl flex flex-col items-center justify-center p-4 gap-2">
+              <div className="absolute w-fit top-10 right-0 border bg-bg-second border-border-color rounded-xl flex flex-col items-center justify-center p-4 gap-2 shadow-md">
                 {
                   doctor.profile_picture ? (
                     <img 
@@ -91,8 +94,8 @@ export default function NavbarClient({doctor}) {
                   <p className="text-sm text-text-second">{doctor?.email}</p>
                 </div>
                 <nav className="w-full flex items-center gap-2 mt-2">
-                  {navItems.map((item, index) => (
-                    <NavItem 
+                  {AccountNavItems.map((item, index) => (
+                    <ProfileNavItem 
                       key={index} 
                       item={item} 
                       onClose={() => setOpenProfile(false)} 
@@ -105,13 +108,12 @@ export default function NavbarClient({doctor}) {
           </div>
           <PopupLogout openLogout={logout} setOpenLogout={logoutAction} />
         </div>
-      </div>
       )}
     </header>
   );
 }
 
-const NavItem = ({ item, onClose, onLogout }) => {
+const ProfileNavItem = ({ item, onClose, onLogout }) => {
   const commonStyles = "w-full flex flex-col items-center rounded-md cursor-pointer px-2 py-2 hover:outline-border-color hover:outline hover:bg-text-main hover:text-bg-main";
   const content = ( <>
       <div className="border border-border-color rounded-xl flex items-center justify-center w-12 h-12">

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import PopUp from "../../../components/ui/popup"
+import PopUp from "@/components/ui/popup"
 import { getHistoryDetailAction } from "../action";
 
 export function PopupResult({selectItem, setSelectItem}) {

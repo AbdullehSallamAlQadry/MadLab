@@ -5,7 +5,7 @@ export default function about() {
     <main>
        <div className='sectionStyle bg-transparent gap-16'>
         <div className='containerStyle'>
-          image
+          <Image src="/assets/5.jpeg" width={500} height={500} alt="image"/>
         </div>
         <div className='containerStyle p-1'>
           <h1 className='headerText mb-2'>
@@ -21,7 +21,7 @@ export default function about() {
         </div>
       </div>
 
-      <div className='sectionStyle dark:bg-dark-bg-second bg-light-bg-second flex-col'>
+      <div className='sectionStyle bg-bg-second flex-col'>
         <div className="flex flex-row justify-center items-center gap-16">
           <div className='containerStyle p-1'>
             <h1 className='headerText mb-2'>
@@ -38,12 +38,12 @@ export default function about() {
             </div>
           </div>
           <div className='containerStyle'>
-            image
+            <Image src="/assets/6.jpeg" width={500} height={500} alt="image"/>
           </div>
         </div>
         <div className="flex flex-row justify-center items-center gap-16">
           <div className='containerStyle'>
-            image
+            <Image src="/assets/4.jpeg" width={500} height={500} alt="image"/>
           </div>
           <div className='containerStyle p-1'>
             <h1 className='headerText mb-2'>
@@ -69,7 +69,7 @@ export default function about() {
         </p>
       </div>
 
-      <div className='sectionStyle flex-col dark:bg-dark-bg-second bg-light-bg-second'>
+      <div className='sectionStyle flex-col bg-bg-second'>
         <div className="flex flex-col justify-between items-center p-15 w-2xl">
           <h1 className='headerText mb-3 text-center'>
             Compliance & Privacy Note

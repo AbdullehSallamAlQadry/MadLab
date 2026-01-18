@@ -14,10 +14,13 @@ export default function PasswordContainer({name, placeholder, error, defaultValu
       defaultValue={defaultValue}
     >
       <FontAwesomeIcon 
-        icon={showPassword ? faEyeSlash : faEye} 
+        icon={showPassword ? faEye : faEyeSlash} 
         className="absolute right-4 top-3 cursor-pointer text-text-second"
-        onMouseDown={() => setShowPassword(showPassword)}  
-        onMouseUp={() => setShowPassword(!showPassword)}  
+        onMouseDown={() => setShowPassword(true)} 
+        onMouseUp={() => setShowPassword(false)} 
+        onMouseLeave={() => setShowPassword(false)}
+        onTouchStart={() => setShowPassword(true)}
+        onTouchEnd={() => setShowPassword(false)}
       />
     </InputContainer>
   )

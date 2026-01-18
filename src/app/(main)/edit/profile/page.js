@@ -4,6 +4,12 @@ import ProfileForm from "./ProfileForm";
 export default async function ProfilePage() {
   const session = await getSessionData();
 
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve("intentional delay");
+    }, 5000);
+  })
+
   return (
     <main className="w-full bg-bg-second p-7  flex flex-col justify-start">
       <header className="mb-10 border-b border-border-color pb-6">

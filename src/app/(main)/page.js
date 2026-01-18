@@ -23,7 +23,7 @@ export default function Home() {
     <main>
       <div className='sectionStyle bg-transparent gap-16'>
         <div className='containerStyle'>
-          image
+          <Image src="/assets/1.jpeg" width={500} height={500} alt="image"/>
         </div>
         <div className='containerStyle p-3'>
           <h1 className="headerText">Your Expertise, Amplified by AI</h1>
@@ -106,7 +106,7 @@ export default function Home() {
             </p>
           </div>
           <div className='containerStyle'>
-            image
+            <Image src="/assets/3.jpeg" width={300} height={300} alt="image"/>
           </div>
         </div>
       </div>

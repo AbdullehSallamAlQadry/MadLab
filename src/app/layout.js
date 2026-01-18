@@ -1,10 +1,7 @@
-import Navbar from "@/components/layout/navbar/navbarServer";
-import Footer from "@/components/layout/footer";
 import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
-import { Toaster } from "react-hot-toast";
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -22,12 +19,7 @@ export default function RootLayout({ children }) {
         }} />
       </head>
       <body className="bg-bg-main text-text-main box-border min-h-screen p-0 m-0 w-384">
-        <AuthProvider>
-          <Navbar />
-          {children}
-          <Footer />
-        </AuthProvider>
-        <Toaster position="bottom-right"/>
+        {children}
       </body>
     </html>
   );

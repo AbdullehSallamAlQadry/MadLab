@@ -1,9 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  swcMinify: false,
   images: {
     remotePatterns: [
       {
-        protocol: 'http',
+        protocol: 'https',
         hostname: 'medmind.site',
         port: '',
         pathname: '/media/**',
@@ -16,6 +17,7 @@ const nextConfig = {
     },
   },
   reactCompiler: true,
+  
 };
 
 export default nextConfig;

@@ -28,10 +28,10 @@ export default function Bills() {
     <main className="bg-bg-second min-h-161 flex flex-col min-w-screen items-center rounded-t-4xl p-10">
       <h1 className="text-4xl mb-3">Purchase Credits</h1>
       <p className="text-text-second text-xl">Choose the perfect bundle for your needs</p>
-      <div className="flex justify-between items-center w-8/11 h-125 p-10">
+      <div className="flex flex-wrap justify-center gap-x-20 gap-y-10 w-8/12 mx-auto mt-2 p-10">
         {
           credits.map((credit) => (
-            <div key={credit.id} className="flex items-center flex-col w-60 h-100 bg-bg-main relative py-10 px-4 border border-border-color rounded-xl capitalize hover:scale-102 transition-all"> 
+            <div key={credit.id} className="flex items-center justify-center flex-col w-60 h-100 bg-bg-main relative py-6 px-4 border border-border-color rounded-xl capitalize hover:scale-102 transition-all"> 
               {credit.special && <p className="bg-btn-bg text-btn-text absolute py-1 px-3 -top-3 rounded-xl text-xs font-semibold">{credit.special}</p>}
               <h1 className="text-3xl mb-5">{credit.header}</h1>
               <p className="text-text-second text-lg">credit</p>
