@@ -2,12 +2,12 @@
 
 import { useActionState, useEffect, useState } from "react"
 import { loginAction, verifyAction, resendAction, forgotPasswordAction } from "./action"
-import SubmitButton from "./components/submit_button"
+import SubmitButton from "../../ui/submit_button"
 import InputContainer from "./components/input_container"
 import PasswordContainer from "./components/password_container"
 import PopUp from "../../ui/popup"
 import { StatusMessage } from "./components/StatusMessage"
-import CloseBtn from "./components/close_button"
+import CloseBtn from "../../ui/close_button"
 
 export default function PopupLogin({openLogin, setOpenRegister, close}) {
   const [state, formAction] = useActionState(loginAction || null); 
@@ -16,8 +16,10 @@ export default function PopupLogin({openLogin, setOpenRegister, close}) {
   const [showLogin, setShowLogin] = useState(true);
 
   useEffect(() => {
-    console.log(state?.data);
-  },[state?.data])
+    if(state?.success) {
+      close()
+    }
+  },[state])
 
   let content;
 
@@ -102,7 +104,7 @@ export default function PopupLogin({openLogin, setOpenRegister, close}) {
     content = (<StatusMessage 
       title="Account Under Review"
       colorClass="bg-amber-100 dark:bg-amber-950/30 border-amber-500 text-amber-500"
-      message="We are verifying your details. You'll receive an email once approved."
+      message="We are verifying your details. You'll receive at your email once approved."
       onClose={close}
       icon={
         <svg className="w-10 h-10 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +125,33 @@ export default function PopupLogin({openLogin, setOpenRegister, close}) {
         </svg>
       }
     />
-  )}
+  )} else if (state?.state === "DELETED") {
+    content = (
+      <StatusMessage 
+        title="Account Recovery Needed"
+        colorClass="bg-amber-50 dark:bg-amber-950/30 border-amber-500/50 text-amber-600"
+        message={
+          <>
+          This account was previously deleted. If you wish to reactivate your profile, 
+          please contact us at{" "}
+          <a 
+            href="mailto:support@medmind.site" 
+            className="text-blue-500 hover:underline font-semibold"
+          >
+            support@medmind.site
+          </a>{" "}
+          to restore your data.
+        </>
+        }
+        onClose={close}
+        icon={
+          <svg className="w-12 h-12 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        }
+      />
+    );
+  }
 
   return (
     <PopUp openPopup={openLogin} width="400px">

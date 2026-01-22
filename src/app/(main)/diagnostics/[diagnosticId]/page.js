@@ -3,7 +3,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useState, use, useEffect } from 'react';
-import SubmitButton from '@/components/feature/auth/components/submit_button';
+import SubmitButton from '@/components/ui/submit_button';
 import { useActionState } from 'react';
 import { diagnosticAction } from './action';
 import { SelectItems } from './components/SelectItems';
@@ -11,9 +11,20 @@ import { FieldItems } from './components/FieldItems';
 import { InputWithError } from './components/InputWithError';
 import { CheckboxItem } from './components/CheckboxItem';
 import Image from 'next/image';
+import { checkAuthStatus } from '@/components/session';
 
 export default function Page({ params }) {
   const initialState = { success: false, data: null, errors: {}, massage: "" };
+
+  useEffect(() => {
+    const verify = async () => {
+      const isAuthenticated = await checkAuthStatus();
+      if (!isAuthenticated) {
+        window.location.href = "/";
+      }
+    };
+    verify();
+  }, []);
 
   const resolvedParams = use(params);
   const diagnosticId = resolvedParams.diagnosticId;
@@ -87,7 +98,7 @@ export default function Page({ params }) {
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
-          <h1 className='w-45 text-text-second border-b-text-second text-center p-1.5'>Samples</h1>
+          <h1 className='w-45 text-text-second border-b border-text-second text-center p-1.5'>Samples</h1>
           <div className='gap-2 flex flex-col h-100 overflow-scroll'>
             {imagePaths.map((path, index) => (
               <div key={path.id} className={`relative border border-border-color rounded-lg cursor-pointer`} 
@@ -113,15 +124,17 @@ export default function Page({ params }) {
 
         <div className='flex flex-col justify-center items-center gap-6'>
           <h1 className='text-3xl mb-2'>{diagnosticName}</h1>
-          <div className='w-120 h-100 flex justify-center items-center border border-border-color bg-bg-second rounded-xl'>
-            {selectImage ? <img src={selectImage} alt="Selected" className='max-w-full max-h-full rounded-xl'/> : <p className='text-text-second'>Upload Samples to preview</p>}
+          <div className='w-120 h-100 flex justify-center items-center bg-bg-second rounded-xl'>
+            {selectImage ? <img src={selectImage} alt="Selected" className='max-w-full max-h-full rounded-xl'/> : <p className='text-text-second capitalize'>upload samples to preview</p>}
           </div>
-          {state?.massage && <div className="text-red-500 text-sm mt-2">{state.massage}</div>}
+          <div className='relative w-full grid place-items-center'>
+            {state?.massage && <div className="text-red-500 text-center text-sm w-full absolute">{state.massage}</div>}
+          </div>
           <SubmitButton name={'Diagnosis'}/>
         </div>
 
         <div className='flex flex-col justify-start items-center w-90 h-145 bg-bg-second rounded-xl p-4 m-4 gap-4'>
-          <h1 className='w-65 text-text-second border-b-text-second text-center p-1.5'>Patient Info</h1>
+          <h1 className='w-65 text-text-second border-b border-text-second text-center p-1.5'>Patient Info</h1>
           <InputWithError name={'age'} label={'Age'} error={state?.errors?.age}> 
             <FieldItems name={'age'} placeholder={'age'} error={state?.errors?.age} defaultValue={state?.fields?.age}/>
           </InputWithError>
@@ -167,7 +180,7 @@ export default function Page({ params }) {
 
           <div className='flex flex-col w-full gap-1'>
             <label htmlFor='note'>Notes</label>
-            <textarea className='resize-none border-text-main border p-1.5 rounded-xl' rows={3} id='note' name='note' placeholder='Additional information...' defaultValue={state?.fields?.note} />
+            <textarea className='resize-none border-border-color border p-1.5 rounded-xl' rows={3} id='note' name='note' placeholder='Additional information...' defaultValue={state?.fields?.note} />
           </div>
         </div>
         <input type="hidden" name="diagnosticId" value={diagnosticId} />

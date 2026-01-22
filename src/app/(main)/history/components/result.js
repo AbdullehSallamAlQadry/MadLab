@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import PopUp from "@/components/ui/popup"
 import { getHistoryDetailAction } from "../action";
+import CloseBtn from "@/components/ui/close_button";
+import Upload from "./upload";
 
 export function PopupResult({selectItem, setSelectItem}) {
   const [detailData, setDetailData] = useState(null);
@@ -25,23 +27,20 @@ export function PopupResult({selectItem, setSelectItem}) {
   }, [selectItem]);
 
   return (
-    <PopUp openPopup={selectItem !== null} height="700px" width="1100px" bg={'--bg-main'}>
-      <div className="relative w-full h-full flex items-end flex-col p-5">
-        <button 
-          className="absolute px-2 text-lg cursor-pointer rounded-lg text-btn-text bg-btn-bg hover:bg-btn-bg/80" 
-          onClick={() => setSelectItem(null)}>
-            &times;
-        </button>
+    <PopUp openPopup={selectItem !== null} height="700px" width="1100px">
+      <div className="relative w-full h-full flex items-end flex-col">
+        <CloseBtn close={() => setSelectItem(null)} className={'absolute right-2 top-4'}/>
         {
           isDetailLoading ? <div className="w-full h-full flex justify-center items-center"> <div className="pageLoader"></div></div> :
-          (detailData && <Success data={detailData} />)
+          (detailData && <Data data={detailData} />)
         }
       </div>
     </PopUp>
   )
 }
 
-function Success({data}) {
+function Data({data}) {
+  const [openUpload, setOpenUpload] = useState(false);
   const [currentInfo, setCurrentInfo] = useState({
     result: data.image_samples[0]?.result[0]?.result || "N/A",
     confidence: data.image_samples[0]?.result[0]?.confidence || 0,
@@ -52,8 +51,16 @@ function Success({data}) {
 
   return(
   <>
-    <div className="h-15">
-
+    <div className="w-full h-20 gap-6 flex items-center ">
+      <p className="pl-3 text-4xl">#{data.id}</p>
+      <button 
+        className="btnStyle"
+        onClick={() => {
+          window.open(`/report/skin-cancer/${data.id}`, '_blank', 'noopener,noreferrer');
+        }}  
+      >
+        Report 
+      </button>
     </div>
     <div className="w-full flex flex-row justify-center items-center gap-6">
       <div className="flex flex-col items-center bg-bg-second rounded-xl w-70 h-146 border border-border-color">
@@ -120,10 +127,16 @@ function Success({data}) {
         </div>
         <div className="w-190 h-30 bg-bg-second rounded-xl flex justify-center items-center border border-border-color gap-4">
           <p className="">Upload the skin biopsy test, participate and get your credits back! </p>
-          <button className="btnStyle">Upload Results</button>
+          <button 
+            className="btnStyle"
+            onClick={() => {setOpenUpload(true)}}
+          >
+            Upload Results
+          </button>
         </div>
       </div>
     </div>
+    <Upload openUpload={openUpload} closeUpload={() => setOpenUpload(false)} id={data?.id}/>
   </>
   )
 }

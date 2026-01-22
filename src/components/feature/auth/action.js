@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod';
-import { deleteSessions, setAuthCookies } from '../../session';
+import { deleteSessions, setAuthCookies, setRefreshCookies } from '../../session';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { API_URL } from '../../env';
@@ -68,7 +68,6 @@ export async function loginAction(prevState, formData) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
-      //credentials: 'include',
     });
 
     const result = await response.json();
@@ -77,28 +76,16 @@ export async function loginAction(prevState, formData) {
       if (result.detail === "Email not verified") return { state: "NOT_VERIFIED", email: data.email };
       if (result.detail === "Doctor account not verified") return { state: "PENDING", email: data.email };
       if (result.detail === "Doctor account is suspended") return { state: "SUSPENDED" };
+      if (result.detail === "Deleted account.") return { state: "DELETED", fields: data };
       
       return { 
-        error: { message: response.detail || "Invalid credentials" }, 
+        error: { message: result.detail || "email or password is invalid" }, 
         fields: data, 
-        data: result.detail
       };
     }
 
-    const cookieStore = await cookies();
-    const backendCookies = response.headers.getSetCookie();
     
-    backendCookies.forEach((cookieString) => {
-      const [nameValue] = cookieString.split(';');
-      const [name, value] = nameValue.split('=');
-      cookieStore.set(name.trim(), value.trim(), {
-        httpOnly: true,
-        secure: true,
-        path: '/',
-        sameSite: 'none'
-      });
-    });
-
+    await setRefreshCookies(result.refresh);
     await setAuthCookies(result.doctor, result.access);
     return { success: true };
   } catch (err) {
@@ -146,12 +133,13 @@ export async function signupAction(prevState, formData) {
         success: true
       };
     }
-
+    
     const errorData = await res.json();
+    if (errorData.detail === "Deleted account.") return { state: "DELETED", fields: data };
     return { error: errorData, fields: data };
 
   } catch (err) {
-    return { message: "Server error during signup", fields: data };
+    return { message: "Server error during signup", fields: data, err:err };
   }
 }
 
@@ -192,7 +180,6 @@ export async function forgotPasswordAction(prevState, formData) {
 
 export async function LogoutAction() {
   await deleteSessions();
-  redirect('/');
 }
 
 function oneErrorPerField(zodError) {

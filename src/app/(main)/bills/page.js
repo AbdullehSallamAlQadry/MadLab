@@ -1,13 +1,24 @@
 'use client'
 
 import { useActionState, useEffect, useState } from "react";
-import SubmitButton from "@/components/feature/auth/components/submit_button";
+import SubmitButton from "@/components/ui/submit_button";
 import { purchaseCreditsAction } from "./action";
 import toastPlay from "@/components/ui/toast";
+import { checkAuthStatus } from "@/components/session";
 
 export default function Bills() {
   const [state, formAction] = useActionState(purchaseCreditsAction, null);
   const [UUID, setUUID] = useState(crypto.randomUUID());
+
+  useEffect(() => {
+    const verify = async () => {
+      const isAuthenticated = await checkAuthStatus();
+      if (!isAuthenticated) {
+        window.location.href = "/";
+      }
+    };
+    verify();
+  }, []);
 
   useEffect(() => {
     console.log(UUID)

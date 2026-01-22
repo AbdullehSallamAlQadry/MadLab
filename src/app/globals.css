@@ -16,26 +16,26 @@
 
     --border-color: #888888;
     
-    --shadow-color: rgba(0, 0, 0, 0.1);
-    --overlay-bg: rgba(0, 0, 0, 0.5);
+    --shadow-color: rgba(0, 0, 0, 0.8);
+    --overlay-bg: rgba(255, 255, 255, 0.5);
   }
   
   [data-theme="dark"] {
     --bg-main: #121212;
     --bg-second: #191919;
     --bg-third: #1f1f1f;
-
+    
     --text-main: #ffffff;
     --text-second: #8E8E8E;
     --text-third: #191919;
     
     --btn-bg: #ffffff;
     --btn-text: #121212;
-
+    
     --border-color:#ffffff;
     
-    --shadow-color: rgba(0, 0, 0, 0.8);
-    --overlay-bg: rgba(255, 255, 255, 0.5);
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --overlay-bg: rgba(0, 0, 0, 0.5);
 }
 
   @theme {

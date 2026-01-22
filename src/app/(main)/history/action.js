@@ -33,3 +33,32 @@ export async function getHistoryDetailAction(id) {
     return { data: null, success: false };
   }
 }
+
+export async function sendFinalFile(prevState, formData) {
+  const id = formData.get("checkup_id");
+  const result = formData.get("result");
+  const document = formData.get("document");
+
+  if (!document || document.size === 0) {
+    return { ok: false, error: { document: "Please upload a file" } };
+  }
+  if (!result) {
+    return { ok: false, error: { result: "Please select a result" } };
+  }
+
+  try {
+    const response = await axiosWithRefresh(`biopsy-results/`, {
+      method: 'POST',
+      body: formData, 
+    });
+
+    if (response.ok) {
+      return { ok: true, data: response };
+    }
+
+    return { ok: false, error: { general: "Upload failed. Please try again." }, err: response };
+    
+  } catch (err) {
+    return { ok: false, error: { general: "Server error occurred." },err: err };
+  }
+}

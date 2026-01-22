@@ -4,10 +4,10 @@ import { useActionState, useEffect, useState } from "react"
 import { signupAction } from "./action"
 import PasswordContainer from "./components/password_container"
 import InputContainer from "./components/input_container"
-import SubmitButton from "./components/submit_button"
+import SubmitButton from "../../ui/submit_button"
 import PopUp from "../../ui/popup"
 import { StatusMessage } from "./components/StatusMessage"
-import CloseBtn from "./components/close_button"
+import CloseBtn from "../../ui/close_button"
 
 export default function PopupSignup({openRegister, setOpenLogin, close}) {
   const [state, formAction] = useActionState(signupAction);
@@ -27,14 +27,18 @@ export default function PopupSignup({openRegister, setOpenLogin, close}) {
     setFileName("");
   }, [state]);
 
-  let context;
+  let content;
 
   if (state?.success) {
-    context = (
+    content = (
       <StatusMessage 
         title="Registration Sent!"
         colorClass="bg-green-50 dark:bg-green-950/30 dark:border-green-100 border-green-900/30 text-green-500"
-        message="Your account has been created successfully. Please wait until the Admin validates your professional license. You will receive an email once approved."
+        message={ 
+          <>
+            Your account has been created successfully. Please wait until the <span className="font-bold">Admin</span> validates your professional license. You will receive an email once approved.
+          </>
+        }
         onClose={close}
         icon = {
           <svg className="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,8 +47,34 @@ export default function PopupSignup({openRegister, setOpenLogin, close}) {
         }
       />
     )
+  } else if (state?.state === "DELETED") {
+    content = (
+      <StatusMessage 
+        title="Account Recovery Needed"
+        colorClass="bg-amber-50 dark:bg-amber-950/30 border-amber-500/50 text-amber-600"
+        message={
+          <>
+          This account was previously deleted. If you wish to reactivate your profile, 
+          please contact us at{" "}
+          <a 
+            href="mailto:support@medmind.site" 
+            className="text-blue-500 hover:underline font-semibold"
+          >
+            support@medmind.site
+          </a>{" "}
+          to restore your data.
+        </>
+        }
+        onClose={close}
+        icon={
+          <svg className="w-12 h-12 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        }
+      />
+    );
   } else {
-    context = (<div className="w-full h-full flex items-end flex-col">
+    content = (<div className="w-full h-full flex items-end flex-col">
       <CloseBtn close={() => close()} />
 
       <form  
@@ -99,7 +129,7 @@ export default function PopupSignup({openRegister, setOpenLogin, close}) {
 
   return (
     <PopUp openPopup={openRegister}>
-      {context}
+      {content}
     </PopUp>
   )
 }

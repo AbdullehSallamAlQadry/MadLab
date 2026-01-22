@@ -1,11 +1,22 @@
 'use client'
 
 import { useActionState, useState, useRef, useEffect } from "react";
-import { updateFullProfileAction, resetPasswordAction } from "./action";
-import SubmitButton from "@/components/feature/auth/components/submit_button";
+import { updateFullProfileAction, resetPasswordAction } from "../action";
+import SubmitButton from "@/components/ui/submit_button";
 import toastPlay from "@/components/ui/toast";
+import { checkAuthStatus } from "@/components/session";
 
 export default function ProfileForm({ doctor }) {
+   useEffect(() => {
+    const verify = async () => {
+      const isAuthenticated = await checkAuthStatus();
+      if (!isAuthenticated) {
+        window.location.href = "/";
+      }
+    };
+    verify();
+  }, []);
+
   const [change, setChange] = useState(false)
   const [state, formAction] = useActionState(updateFullProfileAction, null);
   const [FPstate, FPformAction, isFPPending] = useActionState(resetPasswordAction, null);

@@ -1,4 +1,4 @@
-import { axiosWithRefresh, updateSessionCredits } from "@/components/session";
+import { axiosWithRefresh, getDoctorInfo, updateSessionCredits } from "@/components/session";
 import { getAuthToken } from "@/components/authToken";
 import z from "zod";
 
@@ -109,12 +109,11 @@ export async function diagnosticAction(prevState, formData) {
       return { 
         success: false, 
         fields: data, 
-        errors: res.error || {}, 
+        errors: data || {}, 
         massage: res.data?.detail || "Validation error from server", 
       };
     }
-
-    await updateSessionCredits(-100);
+    await getDoctorInfo()
     const finalResult = await pollResult({ taskId: data.id });
 
     if (finalResult.status === 'PENDING') {
@@ -123,7 +122,7 @@ export async function diagnosticAction(prevState, formData) {
         massage: "Analysis is taking too long. Please check later.", 
         fields: data 
       };
-    }
+    } 
 
     return {
       success: 'COMPLETED', 
@@ -146,7 +145,6 @@ export async function diagnosticAction(prevState, formData) {
 async function pollResult({taskId, maxRetries = 10, interval = 3000}) {
   for (let i = 0; i < maxRetries; i++) {
     const res = await axiosWithRefresh(`/${diagnosticId}-checkups/${taskId}/`);
-    console.log(`/api/${diagnosticId}-checkups/${taskId}/`)
     if (res.ok) {
       const data = res.data;
       if (data.status === 'COMPLETED' || data.results) {

@@ -5,9 +5,20 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { getHistoryAction } from "./action";
 import diagnosticsItems from '../diagnostics/diagnostics.json';
 import { PopupResult } from "./components/result";
+import { checkAuthStatus } from "@/components/session";
 
 export default function History() {
   const [selectItem, setSelectItem] = useState(null);
+
+  useEffect(() => {
+    const verify = async () => {
+      const isAuthenticated = await checkAuthStatus();
+      if (!isAuthenticated) {
+        window.location.href = "/";
+      }
+    };
+    verify();
+  }, []);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -210,6 +221,10 @@ function Item({isLast, item, lastElementRef, setSelectItem, diagnosticsMap}) {
             <img src={config.image} alt={type} className='h-full w-full' />
           </div>
           <p className="text-xl">{type}</p>
+        </div>
+        <div>
+          <p className="text-text-second">id</p>
+          <p>{item.id}</p>
         </div>
         <div>
           <p className="text-text-second">age</p>

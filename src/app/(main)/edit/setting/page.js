@@ -1,9 +1,24 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { checkAuthStatus } from "@/components/session";
+import { useState, useEffect, useActionState } from "react";
+import { DeleteAccount } from "../action";
+import PopUp from "@/components/ui/popup";
+import CloseBtn from "@/components/ui/close_button";
 
 export default function SettingsPage() { 
   const [currentTheme, setCurrentTheme] = useState("dark");
+  const [openDeleteAccount, setOpenDeleteAccount] = useState(false)
+
+  useEffect(() => {
+    const verify = async () => {
+      const isAuthenticated = await checkAuthStatus();
+      if (!isAuthenticated) {
+        window.location.href = "/";
+      }
+    };
+    verify();
+  }, []);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "dark";
@@ -14,9 +29,6 @@ export default function SettingsPage() {
     localStorage.setItem("theme", newTheme);
     setCurrentTheme(newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);
-  };
-  const handleDeleteAccount = async () => {
-    
   };
 
   return (
@@ -54,7 +66,7 @@ export default function SettingsPage() {
               </p>
             </div>
             <button
-              onClick={handleDeleteAccount}
+              onClick={() => setOpenDeleteAccount(true)}
               className="btnStyle bg-red-500! hover:bg-red-600!"
             >
               Delete Account
@@ -62,6 +74,34 @@ export default function SettingsPage() {
           </div>
         </section>
       </div>
+      <DeleteAccountPopUp openDeleteAccount={openDeleteAccount} setOpenDeleteAccount={setOpenDeleteAccount} />
     </main>
   );
+}
+
+function DeleteAccountPopUp({openDeleteAccount, setOpenDeleteAccount}) {
+  const [state, formAction] = useActionState(DeleteAccount)
+  useEffect(()=>{
+    console.log(state)
+  },[state])
+  return (
+    <PopUp openPopup={openDeleteAccount}>
+      <div className="w-full h-full flex items-end flex-col">
+        <CloseBtn close={() => setOpenDeleteAccount(false)}/>
+        <form  
+          className="flex flex-col items-center w-full h-full mb-4" 
+          action={formAction}
+        >
+          <legend className="text-4xl mb-4 text-red-500">Delete Account</legend>
+          <p className="text-center mb-6">Are you sure you want to delete your account</p>
+          <button 
+            type="submit" 
+            className="btnStyle bg-red-500!"
+          >
+            Delete Account
+          </button>
+        </form>
+      </div>
+    </PopUp>
+  )
 }
