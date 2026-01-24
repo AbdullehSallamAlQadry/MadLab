@@ -1,4 +1,4 @@
-import { axiosWithRefresh } from "@/components/session";
+import { axiosWithRefresh } from "@/lib/session";
 
 export async function pullResult(diagnosticId, taskId) {
   try {

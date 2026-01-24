@@ -1,6 +1,6 @@
 'use server'
 
-import { axiosWithRefresh, getDoctorInfo } from "@/components/session";
+import { axiosWithRefresh, getDoctorInfo } from "@/lib/session";
 
 export async function purchaseCreditsAction(prevState, formData) {
   const bundle = formData.get('bundle');

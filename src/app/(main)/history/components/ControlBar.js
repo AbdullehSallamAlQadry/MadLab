@@ -3,75 +3,57 @@ import { Activity } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState, useEffect, useRef } from "react";
 
-export function ControlBar({filterOptions, filtersValue, setFiltersValue, orderByValue, setOrderByValue, orderByOptions, searchTerm, setSearchTerm}) {
-  const filterRef = useRef(null);
-  const [filterTrigger, setFilterTrigger] = useState(false);
-  const orderByRef = useRef(null);
-  const [orderByTrigger, setOrderByTrigger] = useState(false);
+export function ControlBar({filterOptions, filtersValue, setFiltersValue, orderByValue, setOrderByValue, orderByOptions, setDebouncedSearch}) {
+  const [activeMenu, setActiveMenu] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    function handleClickOutside(e) {
-      if (orderByRef.current && !orderByRef.current.contains(e.target)) setOrderByTrigger(false);
-      if (filterRef.current && !filterRef.current.contains(e.target)) setFilterTrigger(false);
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    const t = setTimeout(() => setDebouncedSearch(searchTerm.trim()), 500);
+    return () => clearTimeout(t);
+  }, [searchTerm]);
 
   return (
-    <div className="w-5xl my-5 flex items-center justify-between">
-      <div className="relative" ref={orderByRef}>
-        <button
-          className="px-4 py-1.5 rounded-md hover:bg-btn-bg hover:text-btn-text cursor-pointer"
-          onClick={() => setOrderByTrigger(!orderByTrigger)}
-        >
-          Order By <FontAwesomeIcon icon={faSort} />
-        </button>
-        <div className={orderByTrigger ? 'visible' : 'hidden'}>
-          <div className="absolute w-fit top-10 left-0 border bg-bg-second border-border-color rounded-xl shadow-md flex flex-col items-start justify-start p-4 gap-2">
-            <ul className="menu bg-base-200 rounded-box w-40  grid grid-cols-2 gap-2">
-              {orderByOptions.map((option) => (
-                <li key={`order-${option}`}>
-                  <button
-                    className={`w-full text-center rounded-md cursor-pointer px-2 py-1 ${orderByValue === option ? 'bg-btn-bg text-btn-text' : 'bg-bg-main'}`}
-                    onClick={() => setOrderByValue(option)}
-                  >
-                    {option}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
+    <div className="w-5xl mb-5 flex items-center justify-between sticky top-22 bg-bg-main z-10 py-4 px-6 border-b border-border-color gap-4">
+      <Dropdown 
+        isOpen={activeMenu === 'order'} 
+        setIsOpen={(state) => setActiveMenu(state ? 'order' : null)}
+        trigger={<>Order By <FontAwesomeIcon icon={faSort} /></>}
+      >
+        <ul className="menu bg-base-200 w-40 grid grid-cols-2 gap-2">
+          {orderByOptions.map((option) => (
+            <li key={option}>
+              <button
+                className={`w-full text-center rounded-md px-2 py-1 ${orderByValue === option ? 'bg-btn-bg text-btn-text' : 'bg-bg-main'}`}
+                onClick={() => {
+                  setOrderByValue(option);
+                  setActiveMenu(null);
+                }}
+              >
+                {option}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </Dropdown>
 
-      <div className="relative" ref={filterRef}>
-        <button
-          className="px-4 py-1.5 rounded-md hover:bg-btn-bg hover:text-btn-text cursor-pointer"
-          onClick={() => {
-            setFilterTrigger(!filterTrigger)
-            setOrderByTrigger(false)
-          }}
-        >
-          Filter <FontAwesomeIcon icon={faFilter} />
-        </button>
-        <div className={filterTrigger ? 'visible' : 'hidden'}>
-          <div className="absolute w-150 top-10 left-0 border bg-bg-second border-border-color rounded-xl shadow-md flex-col items-start p-4 gap-4 tra">
-            {
-              Object.entries(filterOptions).map(([key, config]) => (
-                <FilterItems
-                  key={key}
-                  name={config.label}
-                  filterKey={key}
-                  options={config.options}
-                  value={filtersValue[key]}
-                  setFiltersValue={setFiltersValue}
-                />
-              ))
-            }
-          </div>
+      <Dropdown 
+        isOpen={activeMenu === 'filter'} 
+        setIsOpen={(state) => setActiveMenu(state ? 'filter' : null)}
+        trigger={<>Filter <FontAwesomeIcon icon={faFilter} /></>}
+      >
+        <div className="w-160 flex flex-col gap-1">
+          {Object.entries(filterOptions).map(([key, config]) => (
+            <FilterItems
+              key={key}
+              name={config.label}
+              filterKey={key}
+              options={config.options}
+              value={filtersValue[key]}
+              setFiltersValue={setFiltersValue}
+            />
+          ))}
         </div>
-      </div>
+      </Dropdown>
 
       <div className="w-3xl relative border border-border-color rounded-xl flex items-center px-2 gap-2">
         <input
@@ -89,13 +71,13 @@ export function ControlBar({filterOptions, filtersValue, setFiltersValue, orderB
 
 function FilterItems({ name, filterKey, options, value, setFiltersValue }) {
   return (
-    <div className="flex gap-3 my-1">
+    <div className="flex gap-2 my-1">
       <span className="w-30">{name}</span>
-      <div className="flex gap-2 w-full">
+      <div className="flex gap-1 w-full">
         {options.map((option) => (
           <button
             key={`${filterKey}-${option}`}
-            className={`w-full text-center rounded-md cursor-pointer px-2 py-1 ${ value === option ? 'bg-text-main text-bg-main' : 'bg-bg-main'}`}
+            className={`w-full text-center rounded-md cursor-pointer px-2 py-2 ${ value === option ? 'bg-text-main text-bg-main' : 'bg-bg-main'}`}
             onClick={() =>
               setFiltersValue((prev) => ({ ...prev, [filterKey]: option }))
             }
@@ -106,4 +88,35 @@ function FilterItems({ name, filterKey, options, value, setFiltersValue }) {
       </div>
     </div>
   )
+}
+
+function Dropdown({ trigger, children, isOpen, setIsOpen }) {
+  const containerRef = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    }
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen, setIsOpen]);
+
+  return (
+    <div className="relative" ref={containerRef}>
+      <div onClick={() => setIsOpen(!isOpen)}>
+        <button className="px-4 py-3 rounded-md hover:bg-btn-bg hover:text-btn-text cursor-pointer w-30">
+          {trigger}
+        </button>
+      </div>
+
+      {isOpen && (
+        <div className="absolute z-20 top-13 left-0 border bg-bg-second border-border-color rounded-xl shadow-md p-4">
+          {children}
+        </div>
+      )}
+    </div>
+  );
 }

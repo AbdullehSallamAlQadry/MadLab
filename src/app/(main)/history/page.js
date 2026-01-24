@@ -4,12 +4,10 @@ import { ControlBar } from "./components/ControlBar";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { getHistoryAction } from "./action";
 import diagnosticsItems from '../diagnostics/diagnostics.json';
-import { PopupResult } from "./components/result";
-import { checkAuthStatus } from "@/components/session";
+import { checkAuthStatus } from "@/lib/session";
+import Link from "next/link";
 
 export default function History() {
-  const [selectItem, setSelectItem] = useState(null);
-
   useEffect(() => {
     const verify = async () => {
       const isAuthenticated = await checkAuthStatus();
@@ -20,8 +18,8 @@ export default function History() {
     verify();
   }, []);
 
-  const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [error, setError] = useState(null);
 
   const filterOptions = {
     bloodType: {
@@ -55,19 +53,14 @@ export default function History() {
   const [cursor, setCursor] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true); 
   const observer = useRef();
 
   useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(searchTerm.trim()), 500);
-    return () => clearTimeout(t);
-  }, [searchTerm]);
-
-  useEffect(() => {
-    setItems([]);
+    setItems([]); 
     setCursor(null);
     setHasMore(true);
     loadMore(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersValue, orderByValue, debouncedSearch]);
 
   function getTime(time) {
@@ -129,15 +122,28 @@ export default function History() {
   };
 
   const loadMore = useCallback(async (isFirst = false) => {
-    if (!hasMore && !isFirst) return;
-    if (loading) return;
-    const pageCursor = isFirst ? null : cursor;
-    const { items: newItems = [], nextCursor = null } = await fetchPage(pageCursor);
-    setItems(prev => isFirst ? newItems : [...prev, ...newItems]);
-    setCursor(nextCursor);
-    setHasMore(!!nextCursor);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cursor, hasMore, loading, debouncedSearch, filtersValue, orderByValue]);
+    if (loading || (!hasMore && !isFirst)) return;
+    setLoading(true); 
+    try {
+      const pageCursor = isFirst ? null : cursor;
+      const result = await fetchPage(pageCursor);    
+      if (result?.error) throw new Error(result.error);
+      const { items: newItems = [], nextCursor = null } = result;
+      setItems(prev => {
+        if (isFirst) return newItems;
+        const existingIds = new Set(prev.map(i => i.id));
+        const uniqueNewItems = newItems.filter(item => !existingIds.has(item.id));
+        return [...prev, ...uniqueNewItems];
+      });
+      setCursor(nextCursor);
+      setHasMore(!!nextCursor);
+    } catch (error) {
+      setError(err.message || "Failed to load diagnostics. Please check your connection.");
+    } finally {
+      setLoading(false);
+      setIsInitialLoad(false);
+    }
+  }, [cursor, hasMore, loading, buildParams]);
 
   const lastElementRef = useCallback(node => {
     if (loading) return;
@@ -159,21 +165,21 @@ export default function History() {
         orderByOptions={orderByOptions} 
         orderByValue={orderByValue} 
         setOrderByValue={setOrderByValue} 
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}  
+        setDebouncedSearch={setDebouncedSearch} 
       />
 
-      <div className="w-5xl h-122 overflow-scroll">
-        {items.length === 0 && !loading && <div className="p-6 text-center">No diagnostics to preview yet</div>}
-        <ItemsList items={items} lastElementRef={lastElementRef} setSelectItem={setSelectItem}/>
-        {loading && <div className="w-full h-15 flex justify-center items-center"><div className="pageLoader"></div></div>}
+      <div className="w-5xl min-h-100">
+        {!isInitialLoad && items.length === 0 && !loading && !error && <div className="p-6 text-center">No diagnostics to preview yet</div>}
+        <ItemsList items={items} lastElementRef={lastElementRef}/>
+        {(loading || isInitialLoad) && <div className="w-full h-15 flex justify-center items-center"><div className="pageLoader"></div></div>}
+        {error && <ErrorState message={error} onRetry={() => { setError(null); loadMore(true); }} />}
       </div>
-      <PopupResult selectItem={selectItem} setSelectItem={setSelectItem} />
+     
     </main>
   )
 }
 
-function ItemsList({items, lastElementRef, setSelectItem}) {
+function ItemsList({items, lastElementRef}) {
   const diagnosticsMap = useMemo(() => {
     const map = {};
     diagnosticsItems.forEach(category => {
@@ -185,18 +191,18 @@ function ItemsList({items, lastElementRef, setSelectItem}) {
   }, []);
 
   return (
-    <ul className="flex flex-col gap-3 mb-4">
+    <div className="flex flex-col gap-3 mb-3">
       {items.map((item, idx) => {
         const isLast = idx === items.length - 1;
         return (
-          <Item key={item.id} isLast={isLast} item={item} lastElementRef={lastElementRef} setSelectItem={setSelectItem} diagnosticsMap={diagnosticsMap}/>
+          <Item key={item.id} isLast={isLast} item={item} lastElementRef={lastElementRef} diagnosticsMap={diagnosticsMap}/>
         );
       })}
-    </ul>
+    </div>
   )
 }
 
-function Item({isLast, item, lastElementRef, setSelectItem, diagnosticsMap}) {
+function Item({isLast, item, lastElementRef, diagnosticsMap}) {
   const date = new Date(item.created_at).toLocaleDateString('en-GB'); 
   const hour = new Date(item.created_at).toLocaleTimeString('en-US', {
       hour: '2-digit',
@@ -206,10 +212,10 @@ function Item({isLast, item, lastElementRef, setSelectItem, diagnosticsMap}) {
   const type = item.checkup_type.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
   const config = diagnosticsMap[type] || { image: '', color: 'transparent' };
   return (
-    <li
+    <Link
       ref={isLast ? lastElementRef : null}
-      className="py-4 px-10 rounded-4xl bg-bg-second capitalize cursor-pointer focus:border focus:border-border-color"
-      onClick={() => setSelectItem(item.id)}
+      className="py-4 m-px px-10 rounded-4xl bg-bg-second capitalize cursor-pointer hover:outline hover:outline-border-color transition-all duration-1000"
+      href={`/history/${item.id}`}
     >
       <div className="flex gap-2 text-xl">
         <p>{date}</p>
@@ -247,6 +253,22 @@ function Item({isLast, item, lastElementRef, setSelectItem, diagnosticsMap}) {
           <p>{item.image_count}</p>
         </div>
       </div>
-    </li>
+    </Link>
   )
+}
+
+function ErrorState({ message, onRetry }) {
+  return (
+    <div className="w-full py-5 flex flex-col items-center justify-center bg-red-50 rounded-4xl border border-border-color my-3">
+      <div className="text-red-500 mb-4 text-center">
+        <p className="text-sm opacity-80">{message}</p>
+      </div>
+      <button 
+        onClick={onRetry}
+        className="px-6 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-sm"
+      >
+        Try Again
+      </button>
+    </div>
+  );
 }

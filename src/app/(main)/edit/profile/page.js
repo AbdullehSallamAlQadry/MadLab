@@ -1,4 +1,4 @@
-import { getSessionData } from "@/components/session";
+import { getSessionData } from "@/lib/session";
 import ProfileForm from "./ProfileForm";
 
 export default async function ProfilePage() {

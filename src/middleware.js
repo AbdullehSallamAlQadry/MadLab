@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import diagnosticsData from '../src/app/(main)/diagnostics/diagnostics.json';
-import { decrypt } from "./components/auth-utils";
+import { decrypt } from "./lib/auth-utils";
 
 export async function insurement(diagnosticId) {
   return diagnosticsData

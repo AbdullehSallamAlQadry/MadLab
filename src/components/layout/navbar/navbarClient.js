@@ -44,7 +44,7 @@ export default function NavbarClient({doctor}) {
   
   return (
     <header className="w-full flex sticky top-0 items-center justify-between py-5 bg-bg-main px-40 z-60">
-      <h1 className="text-4xl font-thin text-text-main cursor-default">MedMind</h1>
+      <h1 className="text-4xl text-text-main cursor-default"><span className="text-green-700">M</span>ed<span className="text-green-700">M</span>ind</h1>
       
       <nav className='text-xl flex text-text-main gap-10 pt-2'>
         {HeaderNavItems.map((item, index) => (

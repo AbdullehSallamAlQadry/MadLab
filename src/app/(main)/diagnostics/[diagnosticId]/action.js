@@ -1,5 +1,5 @@
-import { axiosWithRefresh, getDoctorInfo, updateSessionCredits } from "@/components/session";
-import { getAuthToken } from "@/components/authToken";
+import { axiosWithRefresh, getDoctorInfo, updateSessionCredits } from "@/lib/session";
+import { getAuthToken } from "@/lib/authToken";
 import z from "zod";
 
 let diagnosticId = null;

@@ -1,6 +1,6 @@
 'use server'
 
-import { axiosWithRefresh, getSessionData, getDoctorInfo, deleteSessions } from "@/components/session";
+import { axiosWithRefresh, getSessionData, getDoctorInfo, deleteSessions } from "@/lib/session";
 import { faHelmetUn } from "@fortawesome/free-solid-svg-icons";
 import z from "zod";
 

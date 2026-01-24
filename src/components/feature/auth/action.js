@@ -1,10 +1,10 @@
 'use server'
 
 import { z } from 'zod';
-import { deleteSessions, setAuthCookies, setRefreshCookies } from '../../session';
+import { deleteSessions, setAuthCookies, setRefreshCookies } from '../../../lib/session';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
-import { API_URL } from '../../env';
+import { API_URL } from '../../../lib/env';
 
 const loginSchema = z.object({
   email: z.string()

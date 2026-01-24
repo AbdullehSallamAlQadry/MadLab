@@ -1,6 +1,6 @@
 'use client'
 
-import { checkAuthStatus } from "@/components/session";
+import { checkAuthStatus } from "@/lib/session";
 import { useState, useEffect, useActionState } from "react";
 import { DeleteAccount } from "../action";
 import PopUp from "@/components/ui/popup";

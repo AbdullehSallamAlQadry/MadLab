@@ -1,12 +1,12 @@
 'use server'
 
-import { axiosWithRefresh } from "@/components/session";
-import { fetchDoctor } from "@/components/authToken";
+import { axiosWithRefresh } from "@/lib/session";
+import { fetchDoctor } from "@/lib/authToken";
 
 export async function getHistoryAction(queryString) {
   const doctor = await fetchDoctor(); 
   try {
-      const res = await axiosWithRefresh(`skin-cancer-checkups/?doctor=${doctor.id}&${queryString}`);
+      const res = await axiosWithRefresh(`skin-cancer-checkups/?${queryString}`);
       if (res.ok) {
           return {
               items: res.data.results, 

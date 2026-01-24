@@ -1,0 +1,59 @@
+Summary of pages/routes, API config, checkup flow, components, and styling
+
+1) Pages / Routes
+- Home: src/app/(main)/page.js — marketing, CTA to /diagnostics.
+- Diagnostics (create checkup): src/app/(main)/diagnostics/[diagnosticId]/page.js — form for patient info and upload 1–5 images; submits diagnosis action.
+- History list: src/app/(main)/history/page.js — paginated, filterable list of previous checkups.
+- History detail: src/app/(main)/history/[resultId]/page.js — checkup detail view with thumbnails, selected image, XAI image, and "Upload Results".
+- Popup result component: src/app/(main)/history/components/result.js — modal to view a checkup's images/results.
+- Upload biopsy popup: src/app/(main)/history/components/upload.js — upload biopsy file + select result.
+- Edit/Profile/Settings: src/app/(main)/edit/* — profile and settings pages (profile form uses server session data).
+- Bills: src/app/(main)/bills/page.js — purchase credits UI.
+- About: src/app/(main)/about/page.js — informational page.
+- PDF Report viewer: src/app/(report)/report/[checkups]/[id]/page.js + container.js — renders server report as PDF using @react-pdf/renderer.
+
+2) API / Network configuration
+- Base URL configured at: src/lib/env.js
+  - API_URL = "https://medmind.site/api/"
+- Axios instance and auth wrapper: src/lib/session.js
+  - axios created with baseURL = API_URL and timeout.
+  - Exposes axiosWithRefresh(url, options) which attaches Authorization header using session cookie, auto-refreshes using POST to `${BASE_URL}auth/refresh/` on 401, and retries requests.
+- Some auth actions use fetch with API_URL directly (examples in src/components/feature/auth/action.js).
+- Endpoints are mostly passed as relative paths to axiosWithRefresh (e.g., `skin-cancer-checkups/?...`, `/{diagnosticId}-checkups/`).
+
+3) Checkup UI flow (create → upload → polling → results + Grad-CAM → submit biopsy)
+- Create & upload images:
+  - User uploads 1–5 files in `src/app/(main)/diagnostics/[diagnosticId]/page.js` (drag/drop + file input).
+  - On submit, server action `diagnosticAction` (src/app/(main)/diagnostics/[diagnosticId]/action.js) validates with zod and builds FormData.
+- Server request & task creation:
+  - `diagnosticAction` POSTs FormData to `/{diagnosticId}-checkups/` via `axiosWithRefresh`. Server returns a task/checkup `id`.
+- Polling for result:
+  - `diagnosticAction` calls `pollResult({taskId})` which repeatedly GETs `/{diagnosticId}-checkups/{taskId}/` (interval ~3000ms, maxRetries default 10) until `status === 'COMPLETED'` (or times out → PENDING).
+- Results + Grad-CAM display:
+  - Successful response includes `image_samples` where each sample has `image` (original) and `result[0].xai_image` (Grad-CAM / XAI heatmap).
+  - UI displays both `image` and `xai_image` using Next/Image in diagnostics complete area and history detail/popup.
+- Submit biopsy results:
+  - "Upload Results" opens `Upload` popup (src/app/(main)/history/components/upload.js) which posts to `biopsy-results/` using `sendFinalFile` (src/app/(main)/history/action.js).
+
+4) Main components for upload/results/Grad-CAM
+- Upload component / biopsy submission: src/app/(main)/history/components/upload.js
+- Result display (thumbnails, selected sample, XAI):
+  - src/app/(main)/history/components/result.js
+  - src/app/(main)/history/[resultId]/page.js
+  - src/app/(main)/diagnostics/[diagnosticId]/page.js (complete result area)
+- Polling and task handling: src/app/(main)/diagnostics/[diagnosticId]/action.js (pollResult function)
+- API wrapper: src/lib/session.js (axiosWithRefresh)
+- Shared UI components: src/components/ui/{submit_button.js,popup.js,close_button.js,toast.js}
+
+5) Styling / UI libraries
+- Tailwind CSS present and used throughout (utility classes in markup).
+- DaisyUI is included in devDependencies (project mixes Tailwind + DaisyUI tokens).
+- Font icons: @fortawesome/react-fontawesome.
+- PDF reports: @react-pdf/renderer.
+
+Notes / Quick references
+- Axios wrapper: src/lib/session.js (baseURL from src/lib/env.js)
+- Example POST for creating checkup: src/app/(main)/diagnostics/[diagnosticId]/action.js → axiosWithRefresh(`/${diagnosticId}-checkups/`, {method:'POST', body})
+- Example polling: pollResult in same action file GETs `/${diagnosticId}-checkups/${taskId}/` repeatedly.
+
+If you want this in a different filename or formatted as Markdown/JSON, tell me the target filename and format.

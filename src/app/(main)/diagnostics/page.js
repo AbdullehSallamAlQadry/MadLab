@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import diagnosticsItems from "./diagnostics.json";
 import { useAuth } from "@/context/AuthContext";
-import { fetchDoctor } from "@/components/authToken";
+import { fetchDoctor } from "@/lib/authToken";
 import { useState, useEffect } from "react";
 
 

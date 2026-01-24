@@ -4,7 +4,7 @@ import { useActionState, useState, useRef, useEffect } from "react";
 import { updateFullProfileAction, resetPasswordAction } from "../action";
 import SubmitButton from "@/components/ui/submit_button";
 import toastPlay from "@/components/ui/toast";
-import { checkAuthStatus } from "@/components/session";
+import { checkAuthStatus } from "@/lib/session";
 
 export default function ProfileForm({ doctor }) {
    useEffect(() => {

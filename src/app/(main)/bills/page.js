@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import SubmitButton from "@/components/ui/submit_button";
 import { purchaseCreditsAction } from "./action";
 import toastPlay from "@/components/ui/toast";
-import { checkAuthStatus } from "@/components/session";
+import { checkAuthStatus } from "@/lib/session";
 
 export default function Bills() {
   const [state, formAction] = useActionState(purchaseCreditsAction, null);

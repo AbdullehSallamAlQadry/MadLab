@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { fetchDoctor } from "@/components/authToken";
+import { fetchDoctor } from "@/lib/authToken";
 import { useAuth } from "@/context/AuthContext";
 import { redirect } from "next/dist/server/api-utils";
 import { useState, useEffect } from "react";
@@ -23,7 +23,7 @@ export default function Home() {
     <main>
       <div className='sectionStyle bg-transparent gap-16'>
         <div className='containerStyle'>
-          <Image src="/assets/1.jpeg" width={500} height={500} alt="image"/>
+          Image
         </div>
         <div className='containerStyle p-3'>
           <h1 className="headerText">Your Expertise, Amplified by AI</h1>
@@ -106,7 +106,7 @@ export default function Home() {
             </p>
           </div>
           <div className='containerStyle'>
-            <Image src="/assets/3.jpeg" width={300} height={300} alt="image"/>
+            Image
           </div>
         </div>
       </div>

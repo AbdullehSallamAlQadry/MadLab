@@ -11,7 +11,7 @@ import { FieldItems } from './components/FieldItems';
 import { InputWithError } from './components/InputWithError';
 import { CheckboxItem } from './components/CheckboxItem';
 import Image from 'next/image';
-import { checkAuthStatus } from '@/components/session';
+import { checkAuthStatus } from '@/lib/session';
 
 export default function Page({ params }) {
   const initialState = { success: false, data: null, errors: {}, massage: "" };
@@ -247,23 +247,23 @@ function CompleteResult({data}) {
           </div>
         </div>
         <div className='flex justify-center items-center gap-1'>
-          {
-            data.image_samples.map((sample, index) => (
-              <div 
-                className='relative w-20 h-20 cursor-pointer'
-                key={sample.id}
-                onClick={() => setCurrentInfo({
-                  result: sample.result[0].result,
-                  confidence: sample.result[0].confidence,
-                  image:sample.image,
-                  xai_image:sample.result[0].xai_image,
-                  number: (index + 1),
-                })}  
-              > 
-                <Image src={sample.image} alt={'image'} fill/>
-              </div>
-            ))
-          }
+          {data.image_samples.map((sample, index) => (
+            <div 
+              className={`relative w-16 h-16 cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${
+                currentInfo.number === index + 1 ? 'border-border-color scale-105' : 'border-transparent opacity-70'
+              }`}
+              key={sample.id}
+              onClick={() => setCurrentInfo({
+                result: sample.result[0].result,
+                confidence: sample.result[0].confidence,
+                image: sample.image,
+                xai_image: sample.result[0].xai_image,
+                number: (index + 1),
+              })}  
+            > 
+              <Image src={sample.image} alt={'thumbnail'} fill className="object-cover"/>
+            </div>
+          ))}
         </div>
       </div>
     </div>
