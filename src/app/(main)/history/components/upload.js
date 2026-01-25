@@ -4,7 +4,7 @@ import PopUp from "@/components/ui/popup";
 import { useActionState, useEffect, useState } from "react";
 import { sendFinalFile } from "../action";
 
-export default function Upload({openUpload, closeUpload, id}) {
+export default function Upload({openUpload, closeUpload, id, setBiopsyId}) {
   const [state, formAction] = useActionState(sendFinalFile);
   const [fileName, setFileName] = useState("");
   const [hideError, setHideError] = useState(false);
@@ -21,15 +21,13 @@ useEffect(() => {
   if (!state?.ok) {
     setFileName("");
     setHideError(false);
-  }
-  else{
-    //closeUpload();
+  } else {
+    console.log(state?.biopsy_id);
+    // on success: close popup and refresh the page so updated biopsy id/status is loaded
+    setBiopsyId(state.biopsy_id);
+    closeUpload();
   }
 }, [state, closeUpload]);
-  
-  useEffect(() => {
-    console.log(state)
-  },[state])
 
   const options = ["Benign", "Precancerous", "Malignant"];
   return(

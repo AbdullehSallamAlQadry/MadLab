@@ -2,7 +2,7 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useState, use, useEffect, useRef } from 'react';
+import { useState, useEffect, use, useRef } from 'react';
 import SubmitButton from '@/components/ui/submit_button';
 import { useActionState } from 'react';
 import { diagnosticAction } from './action';
@@ -12,6 +12,8 @@ import { InputWithError } from './components/InputWithError';
 import { CheckboxItem } from './components/CheckboxItem';
 import Image from 'next/image';
 import { checkAuthStatus } from '@/lib/session';
+import PopUp from '@/components/ui/popup';
+import CloseBtn from '@/components/ui/close_button';
 
 export default function Page({ params }) {
   const initialState = { success: false, data: null, errors: {}, massage: "" };
@@ -34,6 +36,7 @@ export default function Page({ params }) {
   
   const [imagePaths, setImagePaths] = useState([]);
   const [selectImage, setSelectImage] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const [hoverImageIndex, setHoverImageIndex] = useState(null);
   const MAX_IMAGES = 5;
   const resultsRef = useRef(null);
@@ -124,11 +127,13 @@ export default function Page({ params }) {
                 <FontAwesomeIcon 
                   icon={faTrash}
                   size='2xs' 
-                  style={{color:"red", visibility: hoverImageIndex === path.id ? 'visible' : 'hidden', position: 'absolute', marginLeft: '135px', marginTop: '5px'}}
+                  style={{color:"red", visibility: hoverImageIndex === path.id ? 'visible' : 'hidden', position: 'absolute', right: '6px', top: '6px'}}
                   className={`m-1 p-1 bg-btn-bg text-btn-text rounded-lg text-xl cursor-pointer z-10 h-8`} 
                   onClick={(e) => { e.stopPropagation(); handleRemoveImage(index); }} 
                 />  
-                <img src={path.preview} alt="Sample" className="w-40 h-40 rounded-lg" onClick={() => setSelectImage(path.preview)} />
+                <div className="relative w-40 h-40 rounded-lg overflow-hidden" onClick={() => { setSelectImage(path.preview); setShowModal(true); }}>
+                  <Image src={path.preview} alt="Sample" fill className="object-cover" unoptimized />
+                </div>
               </div>
             ))}
           </div>  
@@ -150,7 +155,16 @@ export default function Page({ params }) {
           <h1 className='text-3xl'>{diagnosticName}</h1>
           <p className='text-sm text-text-main font-semibold capitalize'>Clinical reminder: MedMind is an assistive tool — confirm findings with your clinical judgment.</p>
           <div className='w-120 h-100 flex justify-center items-center bg-bg-second rounded-xl'>
-            {selectImage ? <img src={selectImage} alt="Selected" className='max-w-full max-h-full rounded-xl'/> : <p className='text-text-second capitalize'>upload samples to preview</p>}
+            {selectImage ? (
+              <div className="relative w-full h-full" onClick={() => setShowModal(true)}>
+                <Image src={selectImage} alt="Selected" fill className="object-contain rounded-xl" unoptimized />
+                <ImageModal open={showModal} onClose={() => setShowModal(false)}>
+                  <Image src={selectImage} alt="Large view" fill className="object-contain" unoptimized />
+                </ImageModal>
+              </div>
+            ) : (
+              <p className='text-text-second capitalize'>upload samples to preview</p>
+            )}
           </div>
           <div className='relative w-full grid place-items-center'>
             {state?.massage && <div className="text-red-500 text-center text-sm w-full absolute">{state.massage}</div>}
@@ -224,6 +238,27 @@ export default function Page({ params }) {
   );
 }
 
+// Modal for showing large selected image
+function ImageModal({ open, onClose, children }) {
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e) {
+      if (e.key === 'Escape') onClose();
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
+
+  return (
+    <PopUp openPopup={open} width='50rem' height='40rem'>
+      <CloseBtn close={onClose} className='absolute right-1 top-1 z-10'/>
+        <div className="relative w-full h-full flex justify-center items-center">
+          {children}
+        </div>
+    </PopUp>
+  );
+}
+
 function CompleteResult({data}) {
   const [currentInfo, setCurrentInfo] = useState({
     result: data.image_samples[0]?.result[0]?.result || "N/A",
@@ -240,7 +275,7 @@ function CompleteResult({data}) {
 
   return (
     <div className='flex justify-center items-center gap-10'>
-      <h1 className='absolute left-10 top-10 text-4xl'>Results</h1>
+      <h1 className='absolute left-10 top-10 text-4xl'>Results #{data.id}</h1>
       <div className=''>
         <div className="flex flex-col text-start capitalize bg-bg-second px-5 py-3">
           <p className="text-text-second mt-4">Result</p>
@@ -253,12 +288,12 @@ function CompleteResult({data}) {
       </div>
       <div className='flex justify-center items-center flex-col gap-8'>
         <div className="grid grid-cols-3 gap-x-9 grid-rows-2 text-center capitalize bg-bg-second px-5 py-3">
-          <p className="text-text-second text-[24px]">Result</p>
-          <p className="text-text-second text-[24px]">Confidence</p>
-          <p className="text-text-second text-[24px]">Found in</p>
-          <p className="text-[27px]">{data.result}</p>
-          <p className="text-[27px]">{(data.final_confidence * 100).toFixed(2)}%</p>
-          <p className="text-[27px]">{malignantCount} Images</p>
+          <p className="text-text-second text-2xl">Result</p>
+          <p className="text-text-second text-2xl">Confidence</p>
+          <p className="text-text-second text-2xl">Found in</p>
+          <p className="text-3xl">{data.result}</p>
+          <p className="text-3xl">{(data.final_confidence * 100).toFixed(2)}%</p>
+          <p className="text-3xl">{malignantCount} Images</p>
         </div>
         <div className='flex justify-center items-center'>
           <div className='relative w-50 h-50'>

@@ -73,7 +73,7 @@ export default function NavbarClient({doctor}) {
               className='hover:bg-btn-bg hover:text-btn-text rounded-full px-0.5 py-1 cursor-pointer gap-2 flex items-center' 
               onClick={() => setOpenProfile(!openProfile)}
             >
-              <FontAwesomeIcon icon={faUserCircle} className="text-[30px]" />
+              <FontAwesomeIcon icon={faUserCircle} className="text-3xl" />
             </button>
             <div className={`z-9999 ${openProfile ? 'visible' : 'hidden'}`}>
               <div className="absolute w-fit top-10 right-0 border bg-bg-second border-border-color rounded-xl flex flex-col items-center justify-center p-4 gap-2 shadow-md">

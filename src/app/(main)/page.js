@@ -23,7 +23,11 @@ export default function Home() {
     <main>
       <div className='sectionStyle bg-transparent gap-16'>
         <div className='containerStyle'>
-          <Image src="/assets/1.png" alt="Hero Image" width={400} height={400} />
+          <div className="w-full  ">
+            <div className="relative w-full pb-[100%]">
+              <Image src="/assets/11.png" alt="Hero Image" fill className="object-contain" />
+            </div>
+          </div>
         </div>
         <div className='containerStyle p-3'>
           <h1 className="headerText">Your Expertise, Amplified by AI</h1>
@@ -43,7 +47,11 @@ export default function Home() {
         </h1>
         <div className="flex flex-row justify-center items-center gap-16">
           <div className='containerStyle'>
-            images
+            <div className="w-full">
+              <div className="relative w-full pb-[100%]">
+                <Image src="/assets/12.png" alt="Hero Image" fill className="object-contain" />
+              </div>
+            </div>
           </div>
           <div className='containerStyle'>
             <p className='pSecondText mb-16'>
@@ -84,7 +92,11 @@ export default function Home() {
 
         <div className="flex flex-row justify-center items-center gap-16">
           <div className='containerStyle'>
-            image
+            <div className="w-100">
+              <div className="relative w-full pb-[100%]">
+                <Image src="/assets/13.png" alt="Hero Image" fill className="object-contain" />
+              </div>
+            </div>
           </div>
           <div className='containerStyle'>
             <h2 className='pMainText'>
@@ -106,7 +118,11 @@ export default function Home() {
             </p>
           </div>
           <div className='containerStyle'>
-            <Image src="/assets/3.png" alt="Hero Image" width={200} height={200} />
+            <div className="w-60">
+              <div className="relative w-full pb-[100%]">
+                <Image src="/assets/3.png" alt="Hero Image" fill className="object-contain" />
+              </div>
+            </div>
           </div>
         </div>
       </div>

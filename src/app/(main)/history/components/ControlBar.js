@@ -13,7 +13,7 @@ export function ControlBar({filterOptions, filtersValue, setFiltersValue, orderB
   }, [searchTerm]);
 
   return (
-    <div className="w-5xl mb-5 flex items-center justify-between sticky top-22 bg-bg-main z-10 py-4 px-6 border-b border-border-color gap-4">
+    <div className="w-260 mb-5 flex items-center justify-between sticky top-22 bg-bg-main z-10 py-4 px-6 border-b border-border-color gap-4">
       <Dropdown 
         isOpen={activeMenu === 'order'} 
         setIsOpen={(state) => setActiveMenu(state ? 'order' : null)}

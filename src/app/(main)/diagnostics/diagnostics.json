@@ -13,7 +13,7 @@
       {
         "id": "diabetic-retinopathy",
         "name": "Diabetic Retinopathy",
-        "image": "/diagnostics-icons/skin-cancer.svg",
+        "image": "/diagnostics-icons/diabetic-retinopathy.svg",
         "p": "Identify early signs of diabetic retinopathy through advanced image processing techniques.",
         "active": false
       }
@@ -26,21 +26,21 @@
       {
         "id": "skull-fractures",
         "name": "Skull Fractures",
-        "image": "/diagnostics-icons/skin-cancer.svg",
+        "image": "/diagnostics-icons/skull-fractures.svg",
         "p": "Detect skull fractures with precision using AI-enhanced X-ray image analysis.",
         "active": false
       },
       {
         "id": "bone-fractures",
         "name": "Bone Fractures",
-        "image": "/diagnostics-icons/skin-cancer.svg",
+        "image": "/diagnostics-icons/bone-fractures.svg",
         "p": "Accurately identify bone fractures through advanced AI algorithms applied to X-ray images.",
         "active": false
       },
       {
         "id": "rib-fractures",
         "name": "Rib Fractures",
-        "image": "/diagnostics-icons/skin-cancer.svg",
+        "image": "/diagnostics-icons/rib-fractures.svg",
         "p": "Enhance rib fracture detection with AI-driven analysis of chest X-ray images.",
         "active": false
       }
@@ -53,14 +53,14 @@
       {
         "id": "alzheimers",
         "name": "Alzheimer’s",
-        "image": "/diagnostics-icons/skin-cancer.svg",
+        "image": "/diagnostics-icons/alzheimer’s.svg",
         "p": "Early detection of Alzheimer's disease using AI-powered MRI image analysis.",
         "active": false
       },
       {
         "id": "brain-tumor",
         "name": "Brain Tumor",
-        "image": "/diagnostics-icons/skin-cancer.svg",
+        "image": "/diagnostics-icons/brain-tumor.svg",
         "p": "Identify brain tumors with high accuracy through advanced AI techniques applied to MRI scans.",
         "active": false
       }

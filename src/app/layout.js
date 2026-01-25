@@ -18,7 +18,7 @@ export default async function RootLayout({ children }) {
           `
         }} />
       </head>
-      <body className="bg-bg-main text-text-main box-border min-h-screen p-0 m-0 w-384">
+      <body className="bg-bg-main text-text-main box-border min-h-screen p-0 m-0 w-full">
         {children}
       </body>
     </html>
