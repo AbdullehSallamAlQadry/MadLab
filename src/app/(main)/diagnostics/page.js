@@ -42,6 +42,14 @@ export default function Diagnostics() {
 
 function BtnItems({item, group}) {
   const { openLogin } = useAuth();
+  if (!item.active) {
+    return (
+      <div className="text-start text-text-main bg-bg-third w-100 h-50 flex flex-col p-10 rounded-4xl mb-10 opacity-50 cursor-not-allowed">
+        <Items item={item} group={group}/>
+      </div>
+    )
+  }
+
   return (
     <button 
       className="text-start text-text-main bg-bg-third w-100 h-50 flex flex-col p-10 rounded-4xl mb-10 cursor-pointer"
@@ -53,6 +61,14 @@ function BtnItems({item, group}) {
 }
 
 function LinkItems({item, group}) {
+  if (!item.active) {
+    return (
+      <div className="text-text-main bg-bg-third w-100 h-50 flex flex-col p-10 rounded-4xl mb-10 opacity-50 cursor-not-allowed">
+        <Items item={item} group={group}/>
+      </div>
+    )
+  }
+
   return (
     <Link href={`./diagnostics/${item.id}`} className="text-text-main bg-bg-third w-100 h-50 flex flex-col p-10 rounded-4xl mb-10">
       <Items item={item} group={group}/>

@@ -62,3 +62,17 @@ export async function sendFinalFile(prevState, formData) {
     return { ok: false, error: { general: "Server error occurred." },err: err };
   }
 }
+
+export async function getBiopsyStatusAction(id) {
+  try {
+    const res = await axiosWithRefresh(`biopsy-results/${id}/`, {
+      method: 'GET',
+    });
+    if (res.ok) {
+      return { data: res.data, success: true };
+    }
+    return { data: null, success: false };
+  } catch (error) {
+    return { data: null, success: false };
+  }
+}

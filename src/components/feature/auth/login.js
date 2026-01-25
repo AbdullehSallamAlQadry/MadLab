@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useEffect, useState } from "react"
+import { useAuth } from '@/context/AuthContext'
 import { loginAction, verifyAction, resendAction, forgotPasswordAction } from "./action"
 import SubmitButton from "../../ui/submit_button"
 import InputContainer from "./components/input_container"
@@ -15,11 +16,15 @@ export default function PopupLogin({openLogin, setOpenRegister, close}) {
   const [showForgetPW, setShowForgetPW] = useState(false);
   const [showLogin, setShowLogin] = useState(true);
 
+  const { openLoginReminder } = useAuth();
+
   useEffect(() => {
     if(state?.success) {
-      close()
+      // show the login reminder popup first, then close the login modal
+      openLoginReminder();
+      close();
     }
-  },[state])
+  },[state, openLoginReminder, close])
 
   let content;
 

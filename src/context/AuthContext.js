@@ -8,6 +8,7 @@ export function AuthProvider({ children }) {
   const [login, setLogin] = useState(false);
   const [signup, setSignup] = useState(false);
   const [logout, setLogout] = useState(false);
+  const [showLoginReminder, setShowLoginReminder] = useState(false);
 
   const openLogin = () => {
     setLogin(true);
@@ -29,16 +30,22 @@ export function AuthProvider({ children }) {
     setLogout(bool);
   };
 
+  const openLoginReminder = () => setShowLoginReminder(true);
+  const closeLoginReminder = () => setShowLoginReminder(false);
+
   return (
     <AuthContext.Provider
       value={{
         login,
         signup,
         logout,
+        showLoginReminder,
         openLogin,
         openSignup,
         closeAll,
         logoutAction,
+        openLoginReminder,
+        closeLoginReminder,
       }}
     >
       {children}

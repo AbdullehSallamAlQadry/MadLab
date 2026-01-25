@@ -4,6 +4,7 @@ import Link from "next/link";
 import PopupLogin from "../../feature/auth/login";
 import PopupSignup from "../../feature/auth/signup";
 import PopupLogout from "../../feature/auth/logout";
+import LoginReminder from "../../ui/login_reminder";
 import { useRef, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle, faMoneyBill1, faPenToSquare } from "@fortawesome/free-regular-svg-icons";
@@ -57,9 +58,10 @@ export default function NavbarClient({doctor}) {
           <button onClick={() => openSignup(true)} className='linkStyle'>Sign up</button>
           <button onClick={() => openLogin(true)} className='linkStyle'>Login</button>
           { signup && <PopupSignup openRegister={signup} setOpenLogin={openLogin} close={closeAll}/> }
-          { login && <PopupLogin  openLogin={login} setOpenRegister={openSignup} close={closeAll}/> }
         </div>
       )}
+      { login && <PopupLogin  openLogin={login} setOpenRegister={openSignup} close={closeAll}/> }
+      <LoginReminder />
       {doctor && (
         <div className="relative flex items-center gap-2">
           <p className="border border-border-color w-20 rounded-2xl text-center">{doctor?.credits}</p> 

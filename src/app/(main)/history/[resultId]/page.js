@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect, use } from "react";
-import { getHistoryDetailAction } from "../action";
+import { getHistoryDetailAction, getBiopsyStatusAction } from "../action";
 import Upload from "../components/upload";
 
 export default function Page({params}) {
@@ -17,6 +17,8 @@ export default function Page({params}) {
     number: 1,
   });
   const [isDetailLoading, setIsDetailLoading] = useState(true);
+  const [biopsyStatus, setBiopsyStatus] = useState(null);
+  const [loadingBiopsyStatus, setLoadingBiopsyStatus] = useState(false);
 
   useEffect(() => {
     if (resultId) {
@@ -33,6 +35,19 @@ export default function Page({params}) {
       fetchDetail();
     }
   }, [resultId]);
+
+  useEffect(() => {
+    if (!data?.biopsy_result_id) return;
+    const fetchBiopsy = async () => {
+      setLoadingBiopsyStatus(true);
+      const res = await getBiopsyStatusAction(data.biopsy_result_id);
+      if (res?.success) {
+        setBiopsyStatus(res.data);
+      }
+      setLoadingBiopsyStatus(false);
+    };
+    fetchBiopsy();
+  }, [data?.biopsy_result_id]);
 
   useEffect(() => {
     if (data?.image_samples?.length > 0) {
@@ -112,7 +127,7 @@ export default function Page({params}) {
                 <p className="text-text-second text-[20px]">Found in</p>
                 <p className="text-[23px]">{data.result}</p>
                 <p className="text-[23px]">{(data.final_confidence * 100).toFixed(2)}%</p>
-                <p className="text-[23px]">{data.image_count} Images</p>
+                <p className="text-[23px]">{(data.image_samples || []).filter(s => ((s.result?.[0]?.result || '').toString().toLowerCase().includes('malignant'))).length || 0} Images</p>
               </div>
               <div className='flex justify-center items-center'>
                 <div className='relative w-42 h-42'>
@@ -147,13 +162,28 @@ export default function Page({params}) {
           </div>
         </div>
         <div className="w-190 h-30 bg-bg-second rounded-xl flex justify-center items-center border border-border-color gap-4">
-          <p className="">Upload the skin biopsy test, participate and get your credits back! </p>
-          <button 
-            className="btnStyle"
-            onClick={() => {setOpenUpload(true)}}
-          >
-            Upload Results
-          </button>
+          {!data?.biopsy_result_id ? (
+            <>
+              <p className="">Upload the skin biopsy test, participate and get your credits back!</p>
+              <button className="btnStyle" onClick={() => setOpenUpload(true)}>Upload Results</button>
+            </>
+          ) : (
+            <div className="text-sm text-center">
+              {loadingBiopsyStatus ? (
+                <p>Checking biopsy status…</p>
+              ) : biopsyStatus ? (
+                (() => {
+                  const status = (biopsyStatus.status || biopsyStatus.state || '').toString().toLowerCase();
+                  if (status.includes('pend')) return <p>Biopsy status: Pending — please wait for lab confirmation.</p>;
+                  if (status.includes('verif') || status.includes('ok') || status.includes('approved') || status.includes('completed')) return <p>Biopsy status: Verified — result accepted.</p>;
+                  if (status.includes('reject') || status.includes('declin')) return <p>Biopsy status: Rejected — please contact support at <a className="text-blue-500 underline" href="mailto:support@medmind.site">support@medmind.site</a>.</p>;
+                  return <p>Biopsy status: {biopsyStatus.status || biopsyStatus.state || 'Unknown'}</p>;
+                })()
+              ) : (
+                <p>Unable to fetch biopsy status. Try again later.</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

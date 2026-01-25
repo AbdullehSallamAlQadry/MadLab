@@ -2,7 +2,7 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useState, use, useEffect } from 'react';
+import { useState, use, useEffect, useRef } from 'react';
 import SubmitButton from '@/components/ui/submit_button';
 import { useActionState } from 'react';
 import { diagnosticAction } from './action';
@@ -35,22 +35,42 @@ export default function Page({ params }) {
   const [imagePaths, setImagePaths] = useState([]);
   const [selectImage, setSelectImage] = useState(null);
   const [hoverImageIndex, setHoverImageIndex] = useState(null);
+  const MAX_IMAGES = 5;
+  const resultsRef = useRef(null);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (state?.success && state?.data?.status === 'COMPLETED' && resultsRef?.current) {
+      try {
+        const navbarOffset = 80; // adjust if your navbar height differs
+        const top = resultsRef.current.getBoundingClientRect().top + window.scrollY - navbarOffset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      } catch (e) {
+        // fail silently
+      }
+    }
+  }, [state?.success, state?.data?.status]);
 
   function addFiles(files) {
     if (!files || files.length === 0) return;
     const existingNames = imagePaths.map(img => img.file.name);
 
-    const newImagePaths = Array.from(files)
+    const allowed = Math.max(0, MAX_IMAGES - imagePaths.length);
+    if (allowed === 0) return;
+
+    const toAdd = Array.from(files)
       .filter(file => !existingNames.includes(file.name))
+      .slice(0, allowed)
       .map(file => ({
         file: file,
         preview: URL.createObjectURL(file),
         id: crypto.randomUUID()
       }));
 
-    setImagePaths(prevPaths => [...prevPaths, ...newImagePaths]);
-    if (selectImage === null && newImagePaths.length > 0) {
-      setSelectImage(newImagePaths[0].preview);
+    setImagePaths(prevPaths => [...prevPaths, ...toAdd]);
+    if (selectImage === null && toAdd.length > 0) {
+      setSelectImage(toAdd[0].preview);
     }
   }
 
@@ -86,15 +106,11 @@ export default function Page({ params }) {
     formAction(formData);
   };
 
-  useEffect(()=>{
-    console.log(state?.errors)
-  },[state])
-
   return (
     <main suppressHydrationWarning>
-      <form className='w-full h-auto flex justify-center items-center gap-20' action={handleSubmit}>
+      <form className='w-full h-auto flex justify-center items-center gap-10' action={handleSubmit}>
         <div 
-          className='w-64 h-145 bg-bg-second rounded-xl p-4 m-4 flex flex-col gap-4 items-center overflow-scroll'
+          className='w-64 h-150 bg-bg-second rounded-xl p-4 m-4 flex flex-col gap-4 items-center overflow-scroll'
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
@@ -116,14 +132,23 @@ export default function Page({ params }) {
               </div>
             ))}
           </div>  
-          <label className='btnStyle cursor-pointer' htmlFor='images'>
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className={`btnStyle ${imagePaths.length >= MAX_IMAGES ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+            disabled={imagePaths.length >= MAX_IMAGES}
+          >
             Upload Images
-            <input id="images" type="file" className="hidden" multiple onChange={handleAddImage} />
-          </label>
+          </button>
+          <input ref={inputRef} id="images" type="file" className="hidden" multiple onChange={handleAddImage} disabled={imagePaths.length >= MAX_IMAGES} />
+          {imagePaths.length >= MAX_IMAGES && (
+            <p className="text-sm text-red-500 mt-2">Maximum of {MAX_IMAGES} images reached</p>
+          )}
         </div>
 
         <div className='flex flex-col justify-center items-center gap-6'>
-          <h1 className='text-3xl mb-2'>{diagnosticName}</h1>
+          <h1 className='text-3xl'>{diagnosticName}</h1>
+          <p className='text-sm text-text-main font-semibold capitalize'>Clinical reminder: MedMind is an assistive tool — confirm findings with your clinical judgment.</p>
           <div className='w-120 h-100 flex justify-center items-center bg-bg-second rounded-xl'>
             {selectImage ? <img src={selectImage} alt="Selected" className='max-w-full max-h-full rounded-xl'/> : <p className='text-text-second capitalize'>upload samples to preview</p>}
           </div>
@@ -133,7 +158,7 @@ export default function Page({ params }) {
           <SubmitButton name={'Diagnosis'}/>
         </div>
 
-        <div className='flex flex-col justify-start items-center w-90 h-145 bg-bg-second rounded-xl p-4 m-4 gap-4'>
+        <div className='flex flex-col justify-start items-center w-90 h-150 bg-bg-second rounded-xl p-4 m-4 gap-4.5'>
           <h1 className='w-65 text-text-second border-b border-text-second text-center p-1.5'>Patient Info</h1>
           <InputWithError name={'age'} label={'Age'} error={state?.errors?.age}> 
             <FieldItems name={'age'} placeholder={'age'} error={state?.errors?.age} defaultValue={state?.fields?.age}/>
@@ -186,9 +211,8 @@ export default function Page({ params }) {
         <input type="hidden" name="diagnosticId" value={diagnosticId} />
       </form>
       
-      <div className='w-full flex flex-col justify-center items-center mt-10'>
+      <div ref={resultsRef} className='w-full flex flex-col justify-center items-center mt-10'>
         <div className='relative w-250 h-150 bg-bg-second rounded-xl p-4 m-4 flex flex-col justify-center items-center'>
-          <h1 className='absolute left-10 top-10 text-4xl'>Results</h1>
           {(state?.success && state?.data && state?.data?.status === 'COMPLETED') ? (
               <CompleteResult data={state.data} />
           ) : (
@@ -200,10 +224,6 @@ export default function Page({ params }) {
   );
 }
 
-function PandingResult(data) {
-
-}
-
 function CompleteResult({data}) {
   const [currentInfo, setCurrentInfo] = useState({
     result: data.image_samples[0]?.result[0]?.result || "N/A",
@@ -213,8 +233,14 @@ function CompleteResult({data}) {
     number: 1,
   });
 
+  const malignantCount = (data.image_samples || []).filter(s => {
+    const r = (s.result?.[0]?.result || '').toString().toLowerCase();
+    return r.includes('malignant');
+  }).length || 0;
+
   return (
     <div className='flex justify-center items-center gap-10'>
+      <h1 className='absolute left-10 top-10 text-4xl'>Results</h1>
       <div className=''>
         <div className="flex flex-col text-start capitalize bg-bg-second px-5 py-3">
           <p className="text-text-second mt-4">Result</p>
@@ -232,7 +258,7 @@ function CompleteResult({data}) {
           <p className="text-text-second text-[24px]">Found in</p>
           <p className="text-[27px]">{data.result}</p>
           <p className="text-[27px]">{(data.final_confidence * 100).toFixed(2)}%</p>
-          <p className="text-[27px]">{data.image_count} Images</p>
+          <p className="text-[27px]">{malignantCount} Images</p>
         </div>
         <div className='flex justify-center items-center'>
           <div className='relative w-50 h-50'>
