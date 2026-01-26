@@ -3,6 +3,7 @@ import CloseBtn from "@/components/ui/close_button";
 import PopUp from "@/components/ui/popup";
 import { useActionState, useEffect, useState } from "react";
 import { sendFinalFile } from "../action";
+import toastPlay from "@/components/ui/toast";
 
 export default function Upload({openUpload, closeUpload, id, setBiopsyId}) {
   const [state, formAction] = useActionState(sendFinalFile);
@@ -22,9 +23,8 @@ useEffect(() => {
     setFileName("");
     setHideError(false);
   } else {
-    console.log(state?.biopsy_id);
-    // on success: close popup and refresh the page so updated biopsy id/status is loaded
-    setBiopsyId(state.biopsy_id);
+    toastPlay("Upload successful!", "success");
+    setBiopsyId(state?.data?.id);
     closeUpload();
   }
 }, [state, closeUpload]);

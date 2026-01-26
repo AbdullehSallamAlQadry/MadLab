@@ -11,7 +11,7 @@ config.autoAddCss = false;
 export default async function RootLayout({ children }) {
   
   return (
-    <>
+    <div className="bg-bg-main text-text-main box-border min-h-screen p-0 m-0 w-full flex flex-col">
       <AuthProvider>
         <Navbar />
         <Suspense fallback={<Loading/>}>
@@ -20,6 +20,6 @@ export default async function RootLayout({ children }) {
         <Footer />
       </AuthProvider>
       <Toaster position="bottom-right"/>
-    </>
+    </div>
   );
 }

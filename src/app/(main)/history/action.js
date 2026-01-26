@@ -53,7 +53,7 @@ export async function sendFinalFile(prevState, formData) {
     });
 
     if (response.ok) {
-      return { ok: true, data: response.data, biopsy_id: response.data?.id };
+      return { ok: true, data: response.data};
     }
 
     return { ok: false, error: { general: "Upload failed. Please try again." }, err: response };

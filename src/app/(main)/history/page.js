@@ -157,7 +157,7 @@ export default function History() {
   }, [loading, hasMore, loadMore]);
 
   return (
-    <main className="min-h-145 flex flex-col items-center justify-start">
+    <main className="flex flex-col min-w-screen min-h-[87vh] justify-start items-center">
       <ControlBar 
         filterOptions={filterOptions} 
         filtersValue={filtersValue} 

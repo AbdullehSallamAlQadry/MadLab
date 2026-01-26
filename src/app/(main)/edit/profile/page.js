@@ -11,11 +11,13 @@ export default async function ProfilePage() {
   })
 
   return (
-    <main className="w-full bg-bg-second p-7  flex flex-col justify-start">
-      <header className="mb-10 border-b border-border-color pb-6">
-        <h1 className="text-4xl font-bold mb-2">Doctor Profile</h1>
-      </header>
-      <ProfileForm doctor={session?.doctor} />
+    <main className="bg-bg-second flex flex-col min-w-screen min-h-[85vh] justify-center items-center">
+      <div className="w-full p-7 flex flex-col justify-start">
+        <header className="mb-10 border-b border-border-color pb-6">
+          <h1 className="text-4xl font-bold mb-2">Doctor Profile</h1>
+        </header>
+        <ProfileForm doctor={session?.doctor} />
+      </div>
     </main>
   );
 }

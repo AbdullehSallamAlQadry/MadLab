@@ -36,7 +36,7 @@ export default function Bills() {
   ];
 
   return (
-    <main className="bg-bg-second min-h-161 flex flex-col min-w-screen items-center rounded-t-4xl p-10">
+    <main className="bg-bg-second flex flex-col min-w-screen min-h-screen justify-center items-center rounded-t-4xl p-10">
       <h1 className="text-4xl mb-3">Purchase Credits</h1>
       <p className="text-text-second text-xl">Choose the perfect bundle for your needs</p>
       <div className="flex flex-wrap justify-center gap-x-20 gap-y-10 w-8/12 mx-auto mt-2 p-10">
