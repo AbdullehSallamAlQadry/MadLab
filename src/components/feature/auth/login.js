@@ -140,10 +140,10 @@ export default function PopupLogin({openLogin, setOpenRegister, close}) {
           This account was previously deleted. If you wish to reactivate your profile, 
           please contact us at{" "}
           <a 
-            href="mailto:support@medmind.site" 
+            href="mailto:medmind.help@gmail.com" 
             className="text-blue-500 hover:underline font-semibold"
           >
-            support@medmind.site
+            medmind.help@gmail.com
           </a>{" "}
           to restore your data.
         </>

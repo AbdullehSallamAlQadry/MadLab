@@ -146,9 +146,10 @@ export default function Page({ params }) {
             Upload Images
           </button>
           <input ref={inputRef} id="images" type="file" className="hidden" multiple onChange={handleAddImage} disabled={imagePaths.length >= MAX_IMAGES} />
-          {imagePaths.length >= MAX_IMAGES && (
-            <p className="text-sm text-red-500 mt-2">Maximum of {MAX_IMAGES} images reached</p>
-          )}
+          {imagePaths.length >= MAX_IMAGES ?
+            (<p className="text-sm text-red-500 mt-2 capitalize">Maximum of {MAX_IMAGES} images reached</p>) :
+            (<p className="text-sm text-text-second mt-2 capitalize">Upload microscopic images</p>)
+          }
         </div>
 
         <div className='flex flex-col justify-center items-center gap-6'>

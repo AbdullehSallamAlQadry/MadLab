@@ -179,7 +179,7 @@ export default function Page({params}) {
                   (() => {
                     if (biopsyStatus?.status === "PENDING") return <p>Biopsy status: Pending — please wait for lab confirmation.</p>;
                     if (biopsyStatus?.status === "VERIFIED") return <p>Biopsy status: Verified — result accepted.</p>;
-                    if (biopsyStatus?.status === "REJECTED") return <p>Biopsy status: Rejected — please contact support at <a className="text-blue-500 underline" href="mailto:support@medmind.site">support@medmind.site</a>.</p>;
+                    if (biopsyStatus?.status === "REJECTED") return <p>Biopsy status: Rejected — please contact support at <a className="text-blue-500 underline" href="mailto:medmind.help@gmail.com">medmind.help@gmail.com</a>.</p>;
                   })()
                 ) : (
                   <p>Unable to fetch biopsy status. Try again later.</p>

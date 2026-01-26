@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { fetchDoctor } from "@/lib/authToken";
 import { useAuth } from "@/context/AuthContext";
-import { redirect } from "next/dist/server/api-utils";
+import { redirect } from "next/navigation";
 import { useState, useEffect } from "react";
 
 export default function Home() {
@@ -58,7 +58,7 @@ export default function Home() {
               Our AI model analyzes dermoscopic and clinical skin images to assist clinicians in identifying potential malignant lesions, including melanoma, at an early stage.<br/>
               Trained on thousands of labeled dermatology images, MedMind provides fast, consistent, and explainable predictions to support clinical decision-making.
             </p>
-            <button className='btnStyle' onClick={() => doctor ? redirect('/diagnostic') : openSignup()}>
+            <button className='btnStyle' onClick={() => doctor ? redirect('/diagnostics') : openSignup()}>
               Try Now
             </button>
           </div>
